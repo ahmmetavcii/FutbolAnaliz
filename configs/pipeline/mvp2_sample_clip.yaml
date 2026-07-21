@@ -84,17 +84,21 @@ reid:
   min_bbox_area: 36
   verbose: false
 team_identity:
-  color_space: LAB
-  upper_body_top_ratio: 0.1
-  upper_body_bottom_ratio: 0.58
+  color_space: kit_family
+  upper_body_top_ratio: 0.15
+  upper_body_bottom_ratio: 0.65
+  side_inset: 0.20
   minimum_track_samples: 3
   minimum_team_training_samples: 8
-  maximum_samples_per_track: 20
+  maximum_samples_per_track: 24
   outlier_mad_scale: 3.0
   minimum_team_confidence: 0.35
   minimum_role_confidence: 0.35
+  minimum_color_pixel_fraction: 0.05
+  max_bbox_contamination: 0.35
   reset_on_scene_cut: true
   referee_color_separation: 18.0
+  exclude_dark_kits: true
 camera_motion:
   border_region_ratio: 0.12
   max_corners: 300
@@ -176,7 +180,6 @@ render:
   - identity_confidence
   - ball
   - possession
-  - speed
   - distance
   - camera_motion
   - calibration

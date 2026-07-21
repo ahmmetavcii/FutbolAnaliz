@@ -43,7 +43,14 @@ def test_select_samples_respects_stride_and_cap():
             }
         )
     frame = pd.DataFrame(rows)
-    selected = ReidStage._select_samples(frame, sample_stride=5, max_samples=3, min_area=36)
+    selected = ReidStage._select_samples(
+        frame,
+        sample_stride=5,
+        max_samples=3,
+        min_area=36,
+        image_width=1920,
+        image_height=1080,
+    )
     assert len(selected) == 3
     assert [item["frame_id"] for item in selected] == [0, 5, 10]
 

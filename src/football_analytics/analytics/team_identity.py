@@ -1,4 +1,4 @@
-"""Temporal, quality-masked shirt-colour team identity."""
+"""Temporal shirt-colour team identity using kit color-family descriptors."""
 
 from __future__ import annotations
 
@@ -6,12 +6,20 @@ from collections import defaultdict, deque
 from dataclasses import dataclass
 from typing import Iterable, Sequence
 
-import cv2
 import numpy as np
 from sklearn.cluster import KMeans
 
+from football_analytics.analytics.kit_descriptor import (
+    FAMILY_ORDER,
+    colored_score,
+    is_dark_kit_fractions,
+    kit_feature_from_frame,
+    white_score,
+)
 from football_analytics.analytics.role_identity import PlayerRole
 from football_analytics.geometry.bbox import BBox
+
+FEATURE_DIM = len(FAMILY_ORDER)
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,41 +46,30 @@ def sample_upper_torso(
     bbox: BBox | Sequence[float],
     *,
     min_pixels: int = 24,
+    top_ratio: float = 0.15,
+    bottom_ratio: float = 0.65,
+    side_inset: float = 0.20,
 ) -> tuple[np.ndarray | None, float]:
-    """Extract a robust LAB+HSV shirt feature from the central upper torso."""
-    if frame_bgr.ndim != 3 or frame_bgr.shape[2] != 3 or frame_bgr.dtype != np.uint8:
-        raise ValueError("frame_bgr must be a uint8 HxWx3 BGR image")
-    box = bbox if isinstance(bbox, BBox) else BBox.from_sequence(bbox)
-    height, width = frame_bgr.shape[:2]
-    clipped = box.clip(width, height)
-    if not clipped.is_valid(min_area=1.0):
-        return None, 0.0
+    """Extract kit color-family fractions from the center torso.
 
-    # Avoid head, shorts, arms, and box-edge background.
-    x1 = int(np.floor(clipped.x1 + 0.20 * clipped.width))
-    x2 = int(np.ceil(clipped.x2 - 0.20 * clipped.width))
-    y1 = int(np.floor(clipped.y1 + 0.18 * clipped.height))
-    y2 = int(np.ceil(clipped.y1 + 0.58 * clipped.height))
-    crop = frame_bgr[max(0, y1) : min(height, y2), max(0, x1) : min(width, x2)]
-    if crop.size == 0:
-        return None, 0.0
-
-    hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
-    lab = cv2.cvtColor(crop, cv2.COLOR_BGR2LAB)
-    hue, saturation, value = cv2.split(hsv)
-    green = (hue >= 30) & (hue <= 95) & (saturation >= 45)
-    dark = value <= 35
-    bright = value >= 235
-    useful = ~(green | dark | bright)
-    count = int(np.count_nonzero(useful))
-    fraction = count / float(useful.size)
-    if count < min_pixels:
+    ``top_ratio`` / ``bottom_ratio`` / ``side_inset`` map to the Stage 5B
+    normalized torso ROI used by the reference kit descriptor.
+    """
+    x_min = float(side_inset)
+    x_max = 1.0 - float(side_inset)
+    feature, fraction = kit_feature_from_frame(
+        frame_bgr,
+        bbox,
+        x_min=x_min,
+        x_max=x_max,
+        y_min=float(top_ratio),
+        y_max=float(bottom_ratio),
+    )
+    if feature is None:
         return None, fraction
-
-    # Medians make logos, skin, and isolated background pixels low influence.
-    lab_median = np.median(lab[useful], axis=0)
-    hsv_median = np.median(hsv[useful], axis=0)
-    feature = np.concatenate((lab_median, hsv_median)).astype(np.float32)
+    # min_pixels approximated via useful fraction on a typical crop.
+    if fraction <= 0.0 and min_pixels > 0:
+        return None, fraction
     return feature, fraction
 
 
@@ -86,7 +83,7 @@ def robust_pool(features: Iterable[np.ndarray], *, z_threshold: float = 3.5) -> 
         return np.median(matrix, axis=0).astype(np.float32)
     median = np.median(matrix, axis=0)
     mad = np.median(np.abs(matrix - median), axis=0)
-    scale = np.maximum(1.4826 * mad, 1.0)
+    scale = np.maximum(1.4826 * mad, 1e-3)
     score = np.sqrt(np.mean(np.square((matrix - median) / scale), axis=1))
     kept = matrix[score <= z_threshold]
     if kept.size == 0:
@@ -95,7 +92,7 @@ def robust_pool(features: Iterable[np.ndarray], *, z_threshold: float = 3.5) -> 
 
 
 class TeamIdentityAssigner:
-    """Build two scene-local teams from temporal per-track shirt features."""
+    """Build two scene-local teams from temporal per-track kit features."""
 
     def __init__(
         self,
@@ -103,9 +100,10 @@ class TeamIdentityAssigner:
         min_samples: int = 8,
         min_tracks: int = 4,
         history_size: int = 20,
-        min_valid_pixel_fraction: float = 0.15,
+        min_valid_pixel_fraction: float = 0.05,
         unknown_confidence_threshold: float = 0.55,
         random_state: int = 0,
+        exclude_dark_kits: bool = True,
     ) -> None:
         if min_samples < 2 or min_tracks < 2:
             raise ValueError("two-team clustering needs at least two samples and tracks")
@@ -115,6 +113,7 @@ class TeamIdentityAssigner:
         self.min_valid_pixel_fraction = min_valid_pixel_fraction
         self.unknown_confidence_threshold = unknown_confidence_threshold
         self.random_state = random_state
+        self.exclude_dark_kits = exclude_dark_kits
         self._samples: dict[int, deque[np.ndarray]] = defaultdict(
             lambda: deque(maxlen=self.history_size)
         )
@@ -122,6 +121,9 @@ class TeamIdentityAssigner:
         self._scale: float = 1.0
         self._history: dict[int, deque[int]] = defaultdict(lambda: deque(maxlen=12))
         self._roles: dict[int, PlayerRole] = {}
+        self._locked_team: dict[int, int] = {}
+        self._switch_streak: dict[int, int] = defaultdict(int)
+        self._dark_tracks: set[int] = set()
 
     @property
     def fitted(self) -> bool:
@@ -146,8 +148,10 @@ class TeamIdentityAssigner:
         if valid_pixel_fraction < self.min_valid_pixel_fraction:
             return False
         row = np.asarray(feature, dtype=np.float32).reshape(-1)
-        if row.size != 6 or not np.all(np.isfinite(row)):
-            raise ValueError("colour feature must contain six finite LAB+HSV values")
+        if row.size != FEATURE_DIM or not np.all(np.isfinite(row)):
+            raise ValueError(
+                f"kit feature must contain {FEATURE_DIM} finite family fractions"
+            )
         self._samples[track_id].append(row)
         return True
 
@@ -175,24 +179,52 @@ class TeamIdentityAssigner:
     update = observe
 
     def fit(self) -> bool:
-        pooled = [
-            (track_id, robust_pool(samples))
-            for track_id, samples in self._samples.items()
-            if self._roles.get(track_id) is not PlayerRole.REFEREE
-        ]
-        pooled = [(track_id, row) for track_id, row in pooled if row is not None]
+        pooled: list[tuple[int, np.ndarray]] = []
+        for track_id, samples in self._samples.items():
+            if self._roles.get(track_id) is PlayerRole.REFEREE:
+                continue
+            row = robust_pool(samples)
+            if row is None:
+                continue
+            pooled.append((track_id, row))
+
         sample_count = sum(len(samples) for samples in self._samples.values())
         if len(pooled) < self.min_tracks or sample_count < self.min_samples:
             return False
-        matrix = np.stack([row for _, row in pooled])
-        model = KMeans(n_clusters=2, n_init=10, random_state=self.random_state).fit(matrix)
-        centres = model.cluster_centers_.astype(np.float32)
-        # Stable labels are based on LAB lightness, then chromatic channels.
-        order = np.lexsort((centres[:, 2], centres[:, 1], centres[:, 0]))
-        self._centres = centres[order]
-        residuals = np.linalg.norm(matrix - model.cluster_centers_[model.labels_], axis=1)
-        self._scale = max(float(np.median(residuals)) * 2.5, 8.0)
+
+        self._dark_tracks = {
+            track_id
+            for track_id, row in pooled
+            if is_dark_kit_fractions(row)
+        }
+        train = [
+            (track_id, row)
+            for track_id, row in pooled
+            if not (self.exclude_dark_kits and track_id in self._dark_tracks)
+        ]
+        if len(train) < self.min_tracks:
+            train = pooled
+            self._dark_tracks = set()
+
+        matrix = np.stack([row for _, row in train])
+        self._centres, self._scale = self._fit_two_centres(matrix)
         return True
+
+    def _fit_two_centres(self, matrix: np.ndarray) -> tuple[np.ndarray, float]:
+        model = KMeans(n_clusters=2, n_init=20, random_state=self.random_state).fit(
+            matrix
+        )
+        centres = model.cluster_centers_.astype(np.float32)
+        # team_0 = whiter / greyer kits, team_1 = more coloured (yellow etc.).
+        score0 = white_score(centres[0]) - colored_score(centres[0])
+        score1 = white_score(centres[1]) - colored_score(centres[1])
+        if score1 > score0:
+            centres = centres[::-1]
+        distances = np.linalg.norm(matrix[:, None, :] - centres[None, :, :], axis=2)
+        labels = np.argmin(distances, axis=1)
+        residuals = distances[np.arange(len(matrix)), labels]
+        scale = max(float(np.median(residuals)) * 2.5, 0.08)
+        return centres, scale
 
     def assign(
         self, track_id: int, *, role: PlayerRole | str | None = None
@@ -202,18 +234,63 @@ class TeamIdentityAssigner:
         )
         if parsed_role is PlayerRole.REFEREE or self._centres is None:
             return TeamAssignment(None, 0.0, 0.0, parsed_role)
+
         feature = robust_pool(self._samples.get(track_id, ()))
         if feature is None:
             return TeamAssignment(None, 0.0, 0.0, parsed_role)
+
+        if self.exclude_dark_kits and (
+            track_id in self._dark_tracks or is_dark_kit_fractions(feature)
+        ):
+            return TeamAssignment(None, 0.0, 0.0, PlayerRole.REFEREE)
+
         distances = np.linalg.norm(self._centres - feature, axis=1)
         winner = int(np.argmin(distances))
         nearest, other = float(distances[winner]), float(distances[1 - winner])
         separation = (other - nearest) / max(other, 1e-6)
         proximity = float(np.exp(-nearest / self._scale))
-        confidence = float(np.clip(0.5 * separation + 0.5 * proximity, 0.0, 1.0))
+        # Soft prior from white vs coloured family scores.
+        white = white_score(feature)
+        color = colored_score(feature)
+        prior = 0.0
+        if abs(white - color) > 0.08:
+            prior_team = 0 if white > color else 1
+            prior = 0.15 if prior_team == winner else -0.10
+        confidence = float(np.clip(0.5 * separation + 0.5 * proximity + prior, 0.0, 1.0))
+
         if confidence < self.unknown_confidence_threshold:
-            return TeamAssignment(None, confidence, self._consistency(track_id, winner), parsed_role)
+            locked = self._locked_team.get(track_id)
+            if locked is not None:
+                return TeamAssignment(
+                    locked,
+                    max(confidence, self.unknown_confidence_threshold),
+                    1.0,
+                    parsed_role,
+                )
+            return TeamAssignment(
+                None, confidence, self._consistency(track_id, winner), parsed_role
+            )
+
+        locked = self._locked_team.get(track_id)
+        if locked is not None and winner != locked:
+            self._switch_streak[track_id] += 1
+            if self._switch_streak[track_id] < 8 or confidence < max(
+                0.75, self.unknown_confidence_threshold + 0.15
+            ):
+                winner = locked
+                confidence = max(confidence, 0.65)
+            else:
+                self._locked_team[track_id] = winner
+                self._switch_streak[track_id] = 0
+        else:
+            self._switch_streak[track_id] = 0
+            if track_id not in self._locked_team and self._consistency(track_id, winner) >= 0.6:
+                self._locked_team[track_id] = winner
+
         self._history[track_id].append(winner)
+        if track_id not in self._locked_team and len(self._history[track_id]) >= 3:
+            if self._consistency(track_id, winner) >= 0.66:
+                self._locked_team[track_id] = winner
         return TeamAssignment(winner, confidence, self._consistency(track_id, winner), parsed_role)
 
     def _consistency(self, track_id: int, team_id: int) -> float:
@@ -226,6 +303,9 @@ class TeamIdentityAssigner:
         self._samples.clear()
         self._history.clear()
         self._roles.clear()
+        self._locked_team.clear()
+        self._switch_streak.clear()
+        self._dark_tracks.clear()
         self._centres = None
         self._scale = 1.0
 

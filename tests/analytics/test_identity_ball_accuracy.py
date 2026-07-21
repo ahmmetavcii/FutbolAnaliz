@@ -101,6 +101,35 @@ class TestIdentityResolve:
         assert gmap["global_id"].nunique() == 1
         assert int(report.iloc[0]["track_fragment_count"]) == 2
 
+    def test_on_field_surplus_demoted_without_false_merge(self):
+        emb = [_emb(200 + i) for i in range(13)]
+        frags = []
+        for i in range(13):
+            frags.append(
+                TrackFragment(
+                    track_id=i + 1,
+                    team_id="team_0",
+                    team_confidence=0.9,
+                    role="outfield",
+                    first_ms=0.0,
+                    last_ms=2000.0 + i,  # all overlap
+                    frame_count=30,
+                    visible_seconds=2.0 + i * 0.01,
+                    embedding=emb[i],
+                    start_xy=(float(i) * 5.0, 20.0),
+                    end_xy=(float(i) * 5.0 + 1.0, 20.0),
+                    mean_xy=(float(i) * 5.0 + 0.5, 20.0),
+                )
+            )
+        gmap, report, metrics, _ = resolve_global_identities(
+            frags, config=IdentityResolveConfig(enforce_max_on_field=True)
+        )
+        assert gmap["global_id"].nunique() == 13  # no false merges
+        assert metrics["validated_by_team"]["team_0"] <= 11
+        assert metrics["stats_publishable"] is True
+        assert metrics["reid_status"] == "SOLVED"
+        assert int((report["identity_quality"] == "on_field_surplus").sum()) >= 2
+
     def test_validated_over_11_blocks_publish_without_hard_cap(self):
         frags = []
         for i in range(14):
@@ -115,13 +144,18 @@ class TestIdentityResolve:
                     frame_count=20,
                     visible_seconds=2.0 + i * 0.01,
                     embedding=_emb(100 + i),
-                    start_xy=(float(i), 10.0),
-                    end_xy=(float(i) + 1, 10.0),
-                    mean_xy=(float(i) + 0.5, 10.0),
+                    # Far apart on pitch so position stitching cannot collapse them.
+                    start_xy=(float(i) * 25.0, 10.0),
+                    end_xy=(float(i) * 25.0 + 1.0, 10.0),
+                    mean_xy=(float(i) * 25.0 + 0.5, 10.0),
                 )
             )
         _gmap, _report, metrics, _dec = resolve_global_identities(
-            frags, config=IdentityResolveConfig(allow_hard_cap_demotion=False)
+            frags,
+            config=IdentityResolveConfig(
+                allow_hard_cap_demotion=False,
+                enforce_max_on_field=False,
+            ),
         )
         # No demotion: validated can exceed 11; publish blocked
         assert metrics["validated_by_team"]["team_0"] > 11
@@ -302,6 +336,10 @@ def test_global_identity_stage_writes_map(tmp_path: Path):
                     "track_id": tid,
                     "object_type": "person",
                     "timestamp_ms": float((i + (0 if tid == 1 else 50)) * 40),
+                    "bbox_x1": 10.0 + tid,
+                    "bbox_y1": 10.0,
+                    "bbox_x2": 40.0 + tid,
+                    "bbox_y2": 80.0,
                 }
             )
     pd.DataFrame(tracks).to_parquet(run_dir / "tracks.parquet", index=False)

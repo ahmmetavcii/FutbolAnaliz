@@ -33,6 +33,173 @@ def _nullable_text(value: Any, fallback: str = "?") -> str:
     return str(value)
 
 
+def _iou(a: tuple[int, int, int, int], b: tuple[int, int, int, int]) -> float:
+    ax1, ay1, ax2, ay2 = a
+    bx1, by1, bx2, by2 = b
+    ix1, iy1 = max(ax1, bx1), max(ay1, by1)
+    ix2, iy2 = min(ax2, bx2), min(ay2, by2)
+    iw, ih = max(0, ix2 - ix1), max(0, iy2 - iy1)
+    inter = iw * ih
+    if inter <= 0:
+        return 0.0
+    area_a = max(0, ax2 - ax1) * max(0, ay2 - ay1)
+    area_b = max(0, bx2 - bx1) * max(0, by2 - by1)
+    union = area_a + area_b - inter
+    return float(inter / union) if union > 0 else 0.0
+
+
+class _LabelStabilizer:
+    """EMA-smooth label anchors so overlay text does not jitter with bbox noise."""
+
+    def __init__(self, *, alpha: float = 0.28, hold_frames: int = 6) -> None:
+        self.alpha = float(np.clip(alpha, 0.05, 1.0))
+        self.hold_frames = max(0, int(hold_frames))
+        self._pos: dict[int, tuple[float, float]] = {}
+        self._box: dict[int, tuple[float, float, float, float]] = {}
+        self._text: dict[int, str] = {}
+        self._color: dict[int, tuple[int, int, int]] = {}
+        self._last_frame: dict[int, int] = {}
+
+    def observe(
+        self,
+        display_id: int,
+        *,
+        frame_id: int,
+        box: tuple[int, int, int, int],
+        text: str,
+        color: tuple[int, int, int],
+    ) -> tuple[tuple[int, int, int, int], tuple[int, int], str, tuple[int, int, int]]:
+        x1, y1, x2, y2 = (float(v) for v in box)
+        cx = 0.5 * (x1 + x2)
+        top = y1
+        if display_id in self._pos:
+            pcx, ptop = self._pos[display_id]
+            a = self.alpha
+            cx = a * cx + (1.0 - a) * pcx
+            top = a * top + (1.0 - a) * ptop
+            px1, py1, px2, py2 = self._box[display_id]
+            x1 = a * x1 + (1.0 - a) * px1
+            y1 = a * y1 + (1.0 - a) * py1
+            x2 = a * x2 + (1.0 - a) * px2
+            y2 = a * y2 + (1.0 - a) * py2
+            # Keep text identity sticky within hold window (avoid P#/A/B flicker).
+            if text != self._text.get(display_id) and (
+                frame_id - self._last_frame.get(display_id, frame_id) <= 2
+            ):
+                # Prefer previous short label if only speed digit changed; for ID keep new.
+                prev = self._text.get(display_id, text)
+                if prev.split(" ", 1)[0] == text.split(" ", 1)[0]:
+                    text = prev
+        self._pos[display_id] = (cx, top)
+        self._box[display_id] = (x1, y1, x2, y2)
+        self._text[display_id] = text
+        self._color[display_id] = color
+        self._last_frame[display_id] = frame_id
+        label_xy = (int(round(cx)), int(round(top)))
+        smooth_box = (
+            int(round(x1)),
+            int(round(y1)),
+            int(round(x2)),
+            int(round(y2)),
+        )
+        return smooth_box, label_xy, text, color
+
+    def ghosts(self, frame_id: int, active: set[int]) -> list[tuple[int, tuple[int, int], str, tuple[int, int, int]]]:
+        """Briefly keep labels for tracks that dropped for a few frames."""
+        out: list[tuple[int, tuple[int, int], str, tuple[int, int, int]]] = []
+        for display_id, last in list(self._last_frame.items()):
+            if display_id in active:
+                continue
+            age = frame_id - last
+            if age <= 0 or age > self.hold_frames:
+                continue
+            cx, top = self._pos[display_id]
+            out.append(
+                (
+                    display_id,
+                    (int(round(cx)), int(round(top))),
+                    self._text[display_id],
+                    self._color[display_id],
+                )
+            )
+        return out
+
+
+def _nms_person_tracks(
+    tracks: list[dict[str, Any]],
+    display_ids: dict[int, int],
+    *,
+    preferred_displays: set[int] | None = None,
+    iou_thresh: float = 0.55,
+) -> list[dict[str, Any]]:
+    """Keep one box per overlapping cluster; prefer continuity then stable id."""
+    preferred = preferred_displays or set()
+    scored = []
+    for track in tracks:
+        tid = int(track["track_id"])
+        display = display_ids.get(tid, 10_000 + tid)
+        box = (
+            int(track["bbox_x1"]),
+            int(track["bbox_y1"]),
+            int(track["bbox_x2"]),
+            int(track["bbox_y2"]),
+        )
+        scored.append((0 if display in preferred else 1, display, tid, box, track))
+    scored.sort(key=lambda item: (item[0], item[1], item[2]))
+    kept: list[dict[str, Any]] = []
+    kept_boxes: list[tuple[int, int, int, int]] = []
+    kept_display: list[int] = []
+    for _pref, display, _tid, box, track in scored:
+        suppress = False
+        for kb, kd in zip(kept_boxes, kept_display):
+            iou = _iou(box, kb)
+            if kd == display and iou >= 0.20:
+                suppress = True
+                break
+            if kd != display and iou >= max(iou_thresh, 0.55):
+                suppress = True
+                break
+        if suppress:
+            continue
+        kept.append(track)
+        kept_boxes.append(box)
+        kept_display.append(display)
+    return kept
+
+
+def _draw_label(
+    image: np.ndarray,
+    *,
+    text: str,
+    anchor_xy: tuple[int, int],
+    color: tuple[int, int, int],
+    font_scale: float,
+    thickness: int,
+) -> None:
+    cx, top = anchor_xy
+    (tw, th), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, font_scale, thickness)
+    # Center the label above the player; clamp inside frame.
+    tx = int(np.clip(cx - tw // 2, 2, max(2, image.shape[1] - tw - 2)))
+    ty = int(np.clip(top - 8, th + 4, image.shape[0] - 4))
+    cv2.rectangle(
+        image,
+        (tx - 3, ty - th - 5),
+        (tx + tw + 3, ty + 4),
+        (0, 0, 0),
+        -1,
+    )
+    cv2.putText(
+        image,
+        text,
+        (tx, ty),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        font_scale,
+        color,
+        thickness,
+        cv2.LINE_AA,
+    )
+
+
 def render_analytics_video(
     input_video: Path,
     output_video: Path,
@@ -44,9 +211,15 @@ def render_analytics_video(
     camera_motion: pd.DataFrame,
     calibration: pd.DataFrame,
     layers: Iterable[str],
+    display_id_by_track: dict[int, int] | None = None,
+    team_by_track: dict[int, str] | None = None,
+    frame_display_ids: dict[tuple[int, int], int] | None = None,
 ) -> dict[str, Any]:
     """Render frame-by-frame; video frames are never accumulated in memory."""
     layer_set = set(layers)
+    display_ids = display_id_by_track or {}
+    locked_teams = team_by_track or {}
+    frame_ids = frame_display_ids or {}
     capture = cv2.VideoCapture(str(input_video))
     if not capture.isOpened():
         raise RuntimeError(f"Cannot open input video: {input_video}")
@@ -74,12 +247,9 @@ def render_analytics_video(
         for row in frame_rows
         if row.get("track_id") is not None
     }
-    metric_lookup = {
-        (int(row["frame_id"]), int(row["track_id"])): row
-        for frame_rows in metric_rows.values()
-        for row in frame_rows
-        if row.get("track_id") is not None
-    }
+
+    stabilizer = _LabelStabilizer(alpha=0.22, hold_frames=8)
+    preferred_displays: set[int] = set()
 
     frame_id = 0
     written = 0
@@ -87,48 +257,79 @@ def render_analytics_video(
         ok, image = capture.read()
         if not ok:
             break
-        font_scale = max(0.42, min(width, height) / 1400.0)
-        thickness = max(1, int(round(min(width, height) / 720.0)))
-        for track in track_rows.get(frame_id, []):
+        font_scale = max(0.45, min(width, height) / 1300.0)
+        thickness = max(1, int(round(min(width, height) / 700.0)))
+        raw_tracks = [
+            t
+            for t in track_rows.get(frame_id, [])
+            if str(t.get("object_type") or "person") in {"person", "player"}
+        ]
+        # Prefer overlay slot ids for NMS continuity when present.
+        nms_display = {
+            int(t["track_id"]): int(
+                frame_ids.get(
+                    (frame_id, int(t["track_id"])),
+                    display_ids.get(int(t["track_id"]), 10_000 + int(t["track_id"])),
+                )
+            )
+            for t in raw_tracks
+        }
+        person_tracks = _nms_person_tracks(
+            raw_tracks, nms_display, preferred_displays=preferred_displays
+        )
+        active_displays: set[int] = set()
+        for track in person_tracks:
             tid = int(track["track_id"])
+            display = frame_ids.get((frame_id, tid), display_ids.get(tid))
+            if display is None:
+                continue
+            display = int(display)
             ident = identity_lookup.get((frame_id, tid), {})
-            team = _nullable_text(ident.get("team_id"), "unknown")
+            team = locked_teams.get(tid) or _nullable_text(ident.get("team_id"), "unknown")
             color = TEAM_COLORS.get(team, TEAM_COLORS["unknown"])
-            x1, y1, x2, y2 = (
+            raw_box = (
                 int(track["bbox_x1"]),
                 int(track["bbox_y1"]),
                 int(track["bbox_x2"]),
                 int(track["bbox_y2"]),
             )
+            labels: list[str] = []
+            if "track_id" in layer_set:
+                labels.append(f"P{display}")
+            if "team" in layer_set and team not in {"unknown", "?"}:
+                labels.append("A" if team.endswith("0") else "B" if team.endswith("1") else team)
+            text = " ".join(labels) if labels else f"P{display}"
+            smooth_box, anchor, text, color = stabilizer.observe(
+                display,
+                frame_id=frame_id,
+                box=raw_box,
+                text=text,
+                color=color,
+            )
+            active_displays.add(display)
+            x1, y1, x2, y2 = smooth_box
             foot = (int((x1 + x2) / 2), y2)
             axes = (max(8, int((x2 - x1) * 0.55)), max(4, int((x2 - x1) * 0.18)))
-            cv2.ellipse(image, foot, axes, 0, 200, 340, color, thickness)
-            labels = []
-            if "track_id" in layer_set:
-                labels.append(f"ID {tid}")
-            if "role" in layer_set:
-                labels.append(_nullable_text(ident.get("role"), "unknown"))
-            if "team" in layer_set:
-                labels.append(team)
-            if "identity_confidence" in layer_set and ident:
-                labels.append(f"{float(ident.get('confidence') or 0):.2f}")
-            metric = metric_lookup.get((frame_id, tid), {})
-            if metric.get("valid"):
-                if "speed" in layer_set:
-                    labels.append(f"{float(metric.get('smoothed_speed_kmh') or 0):.1f}km/h")
-                if "distance" in layer_set:
-                    labels.append(f"{float(metric.get('cumulative_distance_m') or 0):.1f}m")
-            if labels:
-                cv2.putText(
-                    image,
-                    " ".join(labels),
-                    (max(0, x1), max(15, y1 - 5)),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    font_scale,
-                    color,
-                    thickness,
-                    cv2.LINE_AA,
-                )
+            cv2.ellipse(image, foot, axes, 0, 200, 340, color, thickness + 1)
+            _draw_label(
+                image,
+                text=text,
+                anchor_xy=anchor,
+                color=color,
+                font_scale=font_scale,
+                thickness=thickness,
+            )
+
+        for _did, anchor, text, color in stabilizer.ghosts(frame_id, active_displays):
+            _draw_label(
+                image,
+                text=text,
+                anchor_xy=anchor,
+                color=color,
+                font_scale=font_scale,
+                thickness=thickness,
+            )
+        preferred_displays = active_displays
 
         if "ball" in layer_set:
             for ball in ball_rows.get(frame_id, []):
@@ -190,6 +391,7 @@ def render_analytics_video(
     return {"frames": written, "fps": fps, "width": width, "height": height}
 
 
+
 def render_tactical_preview(
     output_video: Path,
     input_fps: float,
@@ -197,9 +399,11 @@ def render_tactical_preview(
     game_state: pd.DataFrame,
     pitch_length_m: float = 105.0,
     pitch_width_m: float = 68.0,
+    display_id_by_track: dict[int, int] | None = None,
 ) -> dict[str, Any]:
     """Render a tactical pitch; invalid frames clearly state no calibration."""
     width, height = 840, 544
+    display_ids = display_id_by_track or {}
     writer = cv2.VideoWriter(
         str(output_video), cv2.VideoWriter_fourcc(*"mp4v"), input_fps, (width, height)
     )
@@ -207,6 +411,7 @@ def render_tactical_preview(
         raise RuntimeError(f"Cannot create tactical preview: {output_video}")
     grouped = _rows_by_frame(game_state)
     valid_frames = 0
+    stabilizer = _LabelStabilizer(alpha=0.35, hold_frames=4)
     for frame_id in range(frame_count):
         image = np.full((height, width, 3), (35, 110, 35), dtype=np.uint8)
         margin = 32
@@ -214,13 +419,37 @@ def render_tactical_preview(
         cv2.line(image, (width // 2, margin), (width // 2, height - margin), (255, 255, 255), 2)
         cv2.circle(image, (width // 2, height // 2), 52, (255, 255, 255), 2)
         rows = [row for row in grouped.get(frame_id, []) if row.get("valid")]
+        active: set[int] = set()
         if rows:
             valid_frames += 1
             for row in rows:
                 x = margin + int(float(row["x_field"]) / pitch_length_m * (width - 2 * margin))
                 y = margin + int(float(row["y_field"]) / pitch_width_m * (height - 2 * margin))
                 color = TEAM_COLORS.get(_nullable_text(row.get("team_id"), "unknown"), (180, 180, 180))
-                cv2.circle(image, (x, y), 7, color, -1)
+                tid = row.get("track_id")
+                if tid is None or (isinstance(tid, float) and np.isnan(tid)):
+                    cv2.circle(image, (x, y), 7, color, -1)
+                    continue
+                display = display_ids.get(int(tid), int(tid))
+                active.add(int(display))
+                smooth_box, anchor, text, color = stabilizer.observe(
+                    int(display),
+                    frame_id=frame_id,
+                    box=(x - 6, y - 6, x + 6, y + 6),
+                    text=f"P{display}",
+                    color=color,
+                )
+                cx = (smooth_box[0] + smooth_box[2]) // 2
+                cy = (smooth_box[1] + smooth_box[3]) // 2
+                cv2.circle(image, (cx, cy), 7, color, -1)
+                _draw_label(
+                    image,
+                    text=text,
+                    anchor_xy=(anchor[0], anchor[1] - 2),
+                    color=(255, 255, 255),
+                    font_scale=0.35,
+                    thickness=1,
+                )
         else:
             cv2.putText(
                 image,

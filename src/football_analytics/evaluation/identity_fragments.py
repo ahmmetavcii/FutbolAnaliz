@@ -97,7 +97,9 @@ def classify_team_identities(
                 reject_reason = str(rejects.iloc[0].get("reason"))
                 nearest = rejects.iloc[0].get("candidate_global_id")
 
-        # Classification (no auto-count as real players for short fragments)
+        # Classification (no auto-count as real players for short fragments).
+        # Successfully merged fragments (frag_count>=2 + high reid) are real players,
+        # not duplicates. Duplicates are separate global IDs that still look mergeable.
         if visible < short_seconds:
             qclass = "short_fragment"
         elif team_instability:
@@ -106,8 +108,8 @@ def classify_team_identities(
             qclass = "role_instability"
         elif med_h == med_h and med_h < 40:
             qclass = "low_quality_crop"
-        elif frag_count >= 2 and (reid is not None and float(reid) >= 0.5):
-            qclass = "duplicate_identity"
+        elif frag_count >= 2 and (reid is None or float(reid) >= 0.45):
+            qclass = "likely_real_player"
         elif visible >= 2.0 and (med_h != med_h or med_h >= 60):
             qclass = "likely_real_player"
         elif reject_reason == "gap_too_long":

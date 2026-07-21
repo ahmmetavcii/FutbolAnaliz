@@ -254,7 +254,7 @@ Bilinen sınırlar: `docs/setup/mvp2_known_limitations.md`
 | [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) | Lisans / dağıtım |
 | [docs/setup/mvp2_spatial_analytics_report.md](./docs/setup/mvp2_spatial_analytics_report.md) | MVP-2 uygulama raporu |
 | [docs/setup/full_match_readiness/](./docs/setup/full_match_readiness/) | Full-match readiness matrisi |
-| [docs/setup/opta_analytics_report.md](./docs/setup/opta_analytics_report.md) | Opta-benzeri katman durumu |
+| [docs/setup/reid_resolution_report.md](./docs/setup/reid_resolution_report.md) | ReID çözümü (coverage, stitch, SOLVED) |
 | [docs/setup/soccernet_repo_tests/](./docs/setup/soccernet_repo_tests/) | SoccerNet repo audit / remediation |
 
 ---

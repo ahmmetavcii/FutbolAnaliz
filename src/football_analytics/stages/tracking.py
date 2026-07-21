@@ -61,11 +61,24 @@ class TrackingStage(Stage):
         primary_frame: pd.DataFrame | None = None
 
         for tracker in trackers:
+            tracker_name = tracker
+            tracker_cfg_path = tracking_cfg.get("tracker_config")
+            if tracker_cfg_path:
+                cfg_path = Path(str(tracker_cfg_path))
+                if not cfg_path.is_file():
+                    # Resolve relative to project root (parents of scripts/configs)
+                    root = Path(__file__).resolve().parents[3]
+                    candidate = root / cfg_path
+                    if candidate.is_file():
+                        cfg_path = candidate
+                if cfg_path.is_file():
+                    tracker_name = str(cfg_path.resolve())
+
             frame, metrics = adapter.track(
                 video_path=video,
-                tracker=tracker,
+                tracker=tracker_name,
                 project=self.stage_dir / "ultralytics",
-                name=tracker,
+                name=Path(tracker).stem if not str(tracker).endswith(".yaml") else Path(tracker).stem,
                 save=True,
                 persist=bool(tracking_cfg.get("persist", True)),
             )

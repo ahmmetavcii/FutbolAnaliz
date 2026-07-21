@@ -443,8 +443,12 @@ def export_heatmaps(
     out_dir: Path,
     *,
     identities: pd.DataFrame | None = None,
+    stable_map: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
+    # Clear previous fragmented local-id heatmaps
+    for old in out_dir.glob("player_*_position.png"):
+        old.unlink(missing_ok=True)
     if player_metrics is None or player_metrics.empty:
         return {"players": 0, "path": str(out_dir)}
     if "x_field" not in player_metrics.columns:
@@ -455,9 +459,35 @@ def export_heatmaps(
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
+    metrics = player_metrics.copy()
+    team_by_local: dict[int, str] = {}
+    if identities is not None and not identities.empty:
+        for tid, g in identities.groupby("track_id"):
+            assigned = g[g["team_id"].notna()]
+            if not assigned.empty:
+                team_by_local[int(tid)] = str(assigned.iloc[-1]["team_id"])
+
+    if stable_map is not None and not stable_map.empty:
+        local_to_display = {
+            int(r.local_track_id): int(r.display_id) for r in stable_map.itertuples(index=False)
+        }
+        display_team = {
+            int(r.display_id): str(r.team_id)
+            for r in stable_map.itertuples(index=False)
+            if r.team_id is not None and str(r.team_id) not in {"", "nan", "None"}
+        }
+        metrics["display_id"] = metrics["track_id"].map(local_to_display)
+        metrics = metrics.dropna(subset=["display_id"])
+        group_key = "display_id"
+    else:
+        metrics["display_id"] = metrics["track_id"]
+        display_team = {}
+        group_key = "display_id"
+
     written = 0
     grid_rows = []
-    for tid, g in player_metrics.groupby("track_id"):
+    for did, g in metrics.groupby(group_key):
+        did_i = int(did)
         samples = [
             HeatmapSample(
                 timestamp_ms=float(r.timestamp_ms),
@@ -471,11 +501,17 @@ def export_heatmaps(
         if heat.used_samples == 0:
             continue
         arr = np.asarray(heat.normalized, dtype=float)
+        team = display_team.get(did_i)
+        if team is None:
+            # fallback from member locals
+            locals_in = g["track_id"].astype(int).unique().tolist()
+            teams = [team_by_local[t] for t in locals_in if t in team_by_local]
+            team = max(set(teams), key=teams.count) if teams else "unknown"
         fig, ax = plt.subplots(figsize=(6, 4))
         ax.imshow(arr, origin="lower", aspect="auto", cmap="YlOrRd")
-        ax.set_title(f"player_{tid}")
+        ax.set_title(f"P{did_i} ({team})")
         ax.axis("off")
-        path = out_dir / f"player_{tid}_position.png"
+        path = out_dir / f"player_P{did_i}_{team}_position.png"
         fig.savefig(path, bbox_inches="tight", dpi=100)
         plt.close(fig)
         written += 1
@@ -484,7 +520,9 @@ def export_heatmaps(
                 if val > 0:
                     grid_rows.append(
                         {
-                            "global_player_id": tid,
+                            "global_player_id": did_i,
+                            "display_id": did_i,
+                            "team_id": team,
                             "bin_x": ix,
                             "bin_y": iy,
                             "dwell_share": float(val),

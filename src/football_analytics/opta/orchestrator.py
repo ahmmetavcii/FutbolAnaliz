@@ -150,7 +150,13 @@ def run_opta_analytics(run_dir: Path, *, config: dict[str, Any] | None = None) -
     player_summary.to_csv(run_dir / "player_opta_summary.csv", index=False)
     team_summary.to_csv(run_dir / "team_opta_summary.csv", index=False)
 
-    heat = export_heatmaps(player_metrics, run_dir / "heatmaps")
+    stable_map = _read(run_dir, "stable_track_map.parquet")
+    heat = export_heatmaps(
+        player_metrics,
+        run_dir / "heatmaps",
+        identities=identities,
+        stable_map=stable_map if not stable_map.empty else None,
+    )
 
     def _count(frame: pd.DataFrame, status: str = "confirmed") -> int:
         if frame is None or frame.empty or "status" not in frame.columns:

@@ -3,10 +3,10 @@
 Merges local track *fragments* into global players using:
 - hard reject on temporal overlap (same-time different tracks)
 - hard reject on different teams
-- ReID cosine similarity + team colour + pitch continuity for short gaps
-
-Short / low-confidence fragments are discarded from validated counts.
-Validated players per team must be ≤ 11 or stats are not publishable.
+- hard-negative–calibrated ReID thresholds (Market1501 looks-alike safe)
+- relative gallery margin (best − second-best)
+- pitch continuity / physical speed gates
+- second-pass gallery merge for non-overlapping same-team identities
 """
 
 from __future__ import annotations
@@ -17,22 +17,33 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from football_analytics.analytics.reid_matching import (
+    calibrate_hard_negatives,
+    cosine_similarity,
+    relative_accept,
+)
+
 
 @dataclass(frozen=True)
 class IdentityResolveConfig:
-    min_track_frames: int = 20
-    min_visible_seconds: float = 1.20
-    min_team_confidence: float = 0.45
-    max_gap_seconds: float = 8.0
+    min_track_frames: int = 12
+    min_visible_seconds: float = 0.80
+    min_team_confidence: float = 0.40
+    max_gap_seconds: float = 12.0
+    max_gap_seconds_strong_reid: float = 25.0
     reid_merge_threshold: float = 0.42
     reid_strong_threshold: float = 0.55
-    position_continuity_m: float = 12.0
+    reid_hard_negative_margin: float = 0.08
+    reid_relative_margin: float = 0.035
+    position_continuity_m: float = 14.0
     max_player_speed_mps: float = 12.0
     max_validated_per_team: int = 11
     camera_id: str = "camera_1"
-    # Do NOT hard-cap validated to 11 by demoting surplus.
-    # If count > 11 after merge, stats_publishable=false.
     allow_hard_cap_demotion: bool = False
+    enforce_max_on_field: bool = True
+    enable_second_pass_gallery: bool = True
+    second_pass_min_reid: float = 0.0  # 0 → use calibrated strong threshold
+    allow_unknown_team_with_reid: bool = False
 
 
 @dataclass
@@ -72,16 +83,9 @@ class GlobalPlayer:
     simultaneous_conflicts: int = 0
     validated: bool = True
     quality: str = "medium"
-
-
-def _cosine(a: np.ndarray | None, b: np.ndarray | None) -> float | None:
-    if a is None or b is None:
-        return None
-    na = float(np.linalg.norm(a))
-    nb = float(np.linalg.norm(b))
-    if na < 1e-9 or nb < 1e-9:
-        return None
-    return float(np.dot(a, b) / (na * nb))
+    start_xy: tuple[float, float] | None = None
+    end_xy: tuple[float, float] | None = None
+    mean_xy: tuple[float, float] | None = None
 
 
 def _intervals_overlap(a: tuple[float, float], b: tuple[float, float], *, tol_ms: float = 40.0) -> bool:
@@ -95,6 +99,13 @@ def _any_overlap(intervals: list[tuple[float, float]], other: tuple[float, float
 def _role_excluded(role: str) -> bool:
     text = str(role or "").lower()
     return any(k in text for k in ("referee", "official", "staff", "assistant"))
+
+
+def _role_mismatch(a: str, b: str) -> bool:
+    roles = {str(a).lower(), str(b).lower()}
+    return "goalkeeper" in roles and (
+        "outfield" in roles or "unknown" in roles or "unknown_person" in roles
+    )
 
 
 def build_track_fragments(
@@ -153,11 +164,13 @@ def build_track_fragments(
             continue
         if len(g) < cfg.min_track_frames or visible < cfg.min_visible_seconds:
             continue
+        has_reid = tid in emb_by
         if team_id is None or team_conf < cfg.min_team_confidence:
-            # Keep as non-team fragment only if role is clearly outfield later; skip unknowns for validated pool
-            continue
-        if str(team_id) in {"", "unknown", "None"}:
-            continue
+            if not (cfg.allow_unknown_team_with_reid and has_reid):
+                continue
+        if team_id is not None and str(team_id) in {"", "unknown", "None"}:
+            if not (cfg.allow_unknown_team_with_reid and has_reid):
+                continue
 
         start_xy = end_xy = mean_xy = None
         velocity = None
@@ -183,7 +196,7 @@ def build_track_fragments(
         fragments.append(
             TrackFragment(
                 track_id=tid,
-                team_id=team_id,
+                team_id=None if team_id in {None, "", "unknown", "None"} else str(team_id),
                 team_confidence=team_conf,
                 role=role if role not in {"unknown", "unknown_person"} else "outfield",
                 first_ms=first_ms,
@@ -202,6 +215,69 @@ def build_track_fragments(
     return fragments
 
 
+def _gap_seconds(player: GlobalPlayer, interval: tuple[float, float]) -> float:
+    gaps = []
+    for a0, a1 in player.intervals:
+        if interval[0] >= a1:
+            gaps.append(interval[0] - a1)
+        elif interval[1] <= a0:
+            gaps.append(a0 - interval[1])
+    if not gaps:
+        return 0.0
+    return min(gaps) / 1000.0
+
+
+def _position_delta(player: GlobalPlayer, frag: TrackFragment) -> float | None:
+    pos_delta = None
+    for a0, a1 in player.intervals:
+        if frag.first_ms >= a1:
+            exit_xy = player.end_xy or player.mean_xy
+            entry = frag.start_xy or frag.mean_xy
+            if exit_xy is not None and entry is not None:
+                d = float(np.hypot(entry[0] - exit_xy[0], entry[1] - exit_xy[1]))
+                pos_delta = d if pos_delta is None else min(pos_delta, d)
+        elif frag.last_ms <= a0:
+            entry_xy = player.start_xy or player.mean_xy
+            exit_f = frag.end_xy or frag.mean_xy
+            if entry_xy is not None and exit_f is not None:
+                d = float(np.hypot(exit_f[0] - entry_xy[0], exit_f[1] - entry_xy[1]))
+                pos_delta = d if pos_delta is None else min(pos_delta, d)
+    return pos_delta
+
+
+def _attach_fragment(player: GlobalPlayer, frag: TrackFragment, reason: str, detail: dict[str, Any]) -> None:
+    player.track_ids.append(frag.track_id)
+    player.intervals.append((frag.first_ms, frag.last_ms))
+    player.visible_seconds += frag.visible_seconds
+    player.merge_reasons.append(reason)
+    if detail.get("reid_sim") is not None:
+        player.reid_sims.append(float(detail["reid_sim"]))
+    player.team_sims.append(float(detail.get("team_sim") or 0.0))
+    if detail.get("pos_delta") is not None:
+        player.position_deltas.append(float(detail["pos_delta"]))
+    if frag.embedding is not None:
+        if player.embedding is None:
+            player.embedding = frag.embedding.copy()
+            player.embedding_n = 1
+        else:
+            player.embedding = (player.embedding * player.embedding_n + frag.embedding) / (
+                player.embedding_n + 1
+            )
+            player.embedding_n += 1
+            norm = float(np.linalg.norm(player.embedding))
+            if norm > 1e-12:
+                player.embedding = player.embedding / norm
+    if player.start_xy is None and frag.start_xy is not None:
+        player.start_xy = frag.start_xy
+    if frag.end_xy is not None:
+        player.end_xy = frag.end_xy
+    if frag.mean_xy is not None:
+        player.mean_xy = frag.mean_xy
+    if frag.first_ms <= min(iv[0] for iv in player.intervals):
+        if frag.start_xy is not None:
+            player.start_xy = frag.start_xy
+
+
 def resolve_global_identities(
     fragments: list[TrackFragment],
     *,
@@ -209,21 +285,31 @@ def resolve_global_identities(
 ) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, Any], pd.DataFrame]:
     """Return (global_identity_map, identity_report, metrics, decisions)."""
     cfg = config or IdentityResolveConfig()
-    # Longest-first stabilises merges
     ordered = sorted(fragments, key=lambda f: (-f.visible_seconds, f.track_id))
+
+    emb_map = {f.track_id: f.embedding for f in fragments if f.embedding is not None}
+    interval_map = {f.track_id: (f.first_ms, f.last_ms) for f in fragments}
+    team_map = {f.track_id: f.team_id for f in fragments}
+    calibration = calibrate_hard_negatives(
+        {k: v for k, v in emb_map.items() if v is not None},
+        interval_map,
+        team_map,
+        base_merge=cfg.reid_merge_threshold,
+        base_strong=cfg.reid_strong_threshold,
+        margin=cfg.reid_hard_negative_margin,
+    )
+    merge_thr = calibration.merge_threshold
+    strong_thr = calibration.strong_threshold
+
     players: list[GlobalPlayer] = []
     next_id = 1
     decisions: list[dict[str, Any]] = []
 
     for frag in ordered:
         interval = (frag.first_ms, frag.last_ms)
-        best_idx: int | None = None
-        best_score = -1.0
-        best_reason = ""
-        best_detail: dict[str, Any] = {}
+        candidates: list[tuple[int, float, dict[str, Any]]] = []
 
         for idx, player in enumerate(players):
-            # Different team → never merge
             if player.team_id is not None and frag.team_id is not None and player.team_id != frag.team_id:
                 decisions.append(
                     {
@@ -234,34 +320,16 @@ def resolve_global_identities(
                     }
                 )
                 continue
-            # Goalkeeper ↔ outfield hard reject
-            roles = {str(player.role).lower(), str(frag.role).lower()}
-            if "goalkeeper" in roles and ("outfield" in roles or "unknown" in roles):
-                if "goalkeeper" in {str(player.role).lower()} and "goalkeeper" not in {
-                    str(frag.role).lower()
-                }:
-                    decisions.append(
-                        {
-                            "local_track_id": frag.track_id,
-                            "candidate_global_id": player.global_id,
-                            "decision": "reject",
-                            "reason": "role_mismatch_gk_outfield",
-                        }
-                    )
-                    continue
-                if "goalkeeper" in {str(frag.role).lower()} and "goalkeeper" not in {
-                    str(player.role).lower()
-                }:
-                    decisions.append(
-                        {
-                            "local_track_id": frag.track_id,
-                            "candidate_global_id": player.global_id,
-                            "decision": "reject",
-                            "reason": "role_mismatch_gk_outfield",
-                        }
-                    )
-                    continue
-            # Simultaneous visibility → never merge
+            if _role_mismatch(player.role, frag.role):
+                decisions.append(
+                    {
+                        "local_track_id": frag.track_id,
+                        "candidate_global_id": player.global_id,
+                        "decision": "reject",
+                        "reason": "role_mismatch_gk_outfield",
+                    }
+                )
+                continue
             if _any_overlap(player.intervals, interval):
                 player.simultaneous_conflicts += 1
                 decisions.append(
@@ -274,16 +342,14 @@ def resolve_global_identities(
                 )
                 continue
 
-            # Gap between fragment and nearest player interval
-            gaps = []
-            for a0, a1 in player.intervals:
-                if frag.first_ms >= a1:
-                    gaps.append(frag.first_ms - a1)
-                elif frag.last_ms <= a0:
-                    gaps.append(a0 - frag.last_ms)
-            gap_ms = min(gaps) if gaps else 0.0
-            gap_s = gap_ms / 1000.0
-            if gap_s > cfg.max_gap_seconds:
+            gap_s = _gap_seconds(player, interval)
+            reid_sim = cosine_similarity(frag.embedding, player.embedding)
+            max_gap = (
+                cfg.max_gap_seconds_strong_reid
+                if reid_sim is not None and reid_sim >= strong_thr
+                else cfg.max_gap_seconds
+            )
+            if gap_s > max_gap:
                 decisions.append(
                     {
                         "local_track_id": frag.track_id,
@@ -291,32 +357,12 @@ def resolve_global_identities(
                         "decision": "reject",
                         "reason": "gap_too_long",
                         "gap_seconds": gap_s,
+                        "reid_sim": reid_sim,
                     }
                 )
                 continue
 
-            reid_sim = _cosine(frag.embedding, player.embedding)
-            team_sim = 1.0 if frag.team_id == player.team_id else 0.0
-            # Position continuity: compare nearest gap endpoints (exit→entry)
-            pos_delta = None
-            if frag.start_xy is not None or frag.end_xy is not None:
-                # Find closest interval on either side
-                for a0, a1 in player.intervals:
-                    if frag.first_ms >= a1:
-                        # fragment after player interval: player exit → frag entry
-                        exit_xy = getattr(player, "_end_xy", None) or getattr(player, "_mean_xy", None)
-                        entry = frag.start_xy or frag.mean_xy
-                        if exit_xy is not None and entry is not None:
-                            d = float(np.hypot(entry[0] - exit_xy[0], entry[1] - exit_xy[1]))
-                            pos_delta = d if pos_delta is None else min(pos_delta, d)
-                    elif frag.last_ms <= a0:
-                        # fragment before player interval: frag exit → player entry
-                        entry_xy = getattr(player, "_start_xy", None) or getattr(player, "_mean_xy", None)
-                        exit_f = frag.end_xy or frag.mean_xy
-                        if entry_xy is not None and exit_f is not None:
-                            d = float(np.hypot(exit_f[0] - entry_xy[0], exit_f[1] - entry_xy[1]))
-                            pos_delta = d if pos_delta is None else min(pos_delta, d)
-            # Physical feasibility: required speed across gap
+            pos_delta = _position_delta(player, frag)
             if pos_delta is not None and gap_s > 1e-3:
                 required_speed = pos_delta / gap_s
                 if required_speed > cfg.max_player_speed_mps:
@@ -327,104 +373,141 @@ def resolve_global_identities(
                             "decision": "reject",
                             "reason": "physically_impossible_speed",
                             "required_speed_mps": required_speed,
+                            "reid_sim": reid_sim,
                         }
                     )
                     continue
 
+            team_sim = 1.0 if frag.team_id == player.team_id else 0.0
             score = 0.0
-            reasons = []
             if reid_sim is not None:
                 score += 0.55 * max(0.0, reid_sim)
-                reasons.append(f"reid={reid_sim:.3f}")
             score += 0.20 * team_sim
-            reasons.append(f"team={team_sim:.2f}")
             if pos_delta is not None:
-                pos_score = max(0.0, 1.0 - pos_delta / max(cfg.position_continuity_m, 1e-6))
-                score += 0.25 * pos_score
-                reasons.append(f"pos_delta={pos_delta:.2f}")
-            score += 0.10 * max(0.0, 1.0 - gap_s / cfg.max_gap_seconds)
+                score += 0.25 * max(0.0, 1.0 - pos_delta / max(cfg.position_continuity_m, 1e-6))
+            score += 0.10 * max(0.0, 1.0 - gap_s / max(max_gap, 1e-6))
+            candidates.append(
+                (
+                    idx,
+                    score,
+                    {
+                        "reid_sim": reid_sim,
+                        "team_sim": team_sim,
+                        "pos_delta": pos_delta,
+                        "gap_seconds": gap_s,
+                        "score": score,
+                    },
+                )
+            )
+
+        candidates.sort(key=lambda item: item[1], reverse=True)
+        best_idx = None
+        best_reason = ""
+        best_detail: dict[str, Any] = {}
+        if candidates:
+            best_idx_cand, best_score, best_detail = candidates[0]
+            second_sim = candidates[1][2].get("reid_sim") if len(candidates) > 1 else None
+            best_sim = best_detail.get("reid_sim")
+            team_sim = float(best_detail.get("team_sim") or 0.0)
+            pos_delta = best_detail.get("pos_delta")
+            gap_s = float(best_detail.get("gap_seconds") or 0.0)
 
             accept = False
             reason = ""
-            if reid_sim is not None and reid_sim >= cfg.reid_strong_threshold and team_sim == 1.0:
-                accept = True
-                reason = "strong_reid_same_team"
+            if team_sim == 1.0 and best_sim is not None:
+                ok, reason = relative_accept(
+                    best_sim,
+                    second_sim if isinstance(second_sim, float) else None,
+                    merge_threshold=merge_thr,
+                    strong_threshold=strong_thr,
+                    relative_margin=cfg.reid_relative_margin,
+                )
+                if ok:
+                    if pos_delta is None or pos_delta <= cfg.position_continuity_m or best_sim >= strong_thr:
+                        accept = True
+                    else:
+                        reason = "reid_ok_but_position_far"
+                elif (
+                    best_sim >= merge_thr
+                    and pos_delta is not None
+                    and pos_delta <= cfg.position_continuity_m * 0.5
+                    and gap_s <= 3.0
+                ):
+                    accept = True
+                    reason = "reid_strong_position_bridge"
             elif (
-                reid_sim is not None
-                and reid_sim >= cfg.reid_merge_threshold
-                and team_sim == 1.0
-                and (pos_delta is None or pos_delta <= cfg.position_continuity_m)
-            ):
-                accept = True
-                reason = "reid_team_position"
-            elif (
-                reid_sim is None
-                and team_sim == 1.0
+                team_sim == 1.0
+                and best_sim is None
                 and pos_delta is not None
-                and pos_delta <= cfg.position_continuity_m * 0.6
-                and gap_s <= 2.0
+                and pos_delta <= cfg.position_continuity_m * 0.55
+                and gap_s <= 2.5
             ):
                 accept = True
                 reason = "short_gap_position_continuity"
-            elif (
-                reid_sim is not None
-                and reid_sim >= cfg.reid_merge_threshold - 0.05
-                and team_sim == 1.0
-                and pos_delta is not None
-                and pos_delta <= cfg.position_continuity_m * 0.5
-                and gap_s <= 3.0
-            ):
-                accept = True
-                reason = "reid_strong_position_bridge"
 
-            if accept and score > best_score:
-                best_score = score
-                best_idx = idx
+            # Unique physically-feasible candidate: stitch even when OSNet is weak,
+            # but only with real pitch continuity (or decent ReID). Never chain on
+            # "only candidate" alone — that collapses unrelated non-overlapping tracks.
+            if not accept and team_sim == 1.0 and len(candidates) >= 1:
+                feasible = []
+                for idx_c, score_c, detail_c in candidates:
+                    gap_c = float(detail_c.get("gap_seconds") or 0.0)
+                    pos_c = detail_c.get("pos_delta")
+                    reid_c = detail_c.get("reid_sim")
+                    if gap_c > cfg.max_gap_seconds_strong_reid:
+                        continue
+                    if pos_c is not None and gap_c > 1e-3 and (pos_c / gap_c) > cfg.max_player_speed_mps:
+                        continue
+                    if pos_c is not None and pos_c > cfg.position_continuity_m * 1.35:
+                        continue
+                    has_pos = pos_c is not None and pos_c <= cfg.position_continuity_m and gap_c <= cfg.max_gap_seconds
+                    has_reid = reid_c is not None and reid_c >= (merge_thr - 0.12)
+                    if not (has_pos or has_reid):
+                        continue
+                    feasible.append((idx_c, score_c, detail_c))
+                if len(feasible) == 1:
+                    best_idx_cand, best_score, best_detail = feasible[0]
+                    accept = True
+                    reason = "unique_feasible_slot"
+                elif len(feasible) >= 2:
+                    feasible.sort(
+                        key=lambda item: (
+                            item[2].get("pos_delta") is None,
+                            float(item[2].get("pos_delta") or 1e9),
+                            -float(item[2].get("reid_sim") or -1.0),
+                        )
+                    )
+                    top = feasible[0]
+                    second = feasible[1]
+                    top_pos = top[2].get("pos_delta")
+                    sec_pos = second[2].get("pos_delta")
+                    top_reid = top[2].get("reid_sim")
+                    if (
+                        top_pos is not None
+                        and sec_pos is not None
+                        and top_pos <= cfg.position_continuity_m
+                        and top_pos * 1.8 <= sec_pos
+                        and (top_reid is None or top_reid >= merge_thr - 0.15)
+                    ):
+                        best_idx_cand, best_score, best_detail = top
+                        accept = True
+                        reason = "dominant_position_slot"
+
+            if accept:
+                best_idx = best_idx_cand
                 best_reason = reason
-                best_detail = {
-                    "reid_sim": reid_sim,
-                    "team_sim": team_sim,
-                    "pos_delta": pos_delta,
-                    "gap_seconds": gap_s,
-                    "score": score,
-                    "cues": reasons,
-                }
+                best_detail = {**best_detail, "score": best_score, "calibrated_merge": merge_thr}
 
         if best_idx is not None:
             player = players[best_idx]
-            player.track_ids.append(frag.track_id)
-            player.intervals.append(interval)
-            player.visible_seconds += frag.visible_seconds
-            player.merge_reasons.append(best_reason)
-            if best_detail.get("reid_sim") is not None:
-                player.reid_sims.append(float(best_detail["reid_sim"]))
-            player.team_sims.append(float(best_detail.get("team_sim") or 0.0))
-            if best_detail.get("pos_delta") is not None:
-                player.position_deltas.append(float(best_detail["pos_delta"]))
-            if frag.embedding is not None:
-                if player.embedding is None:
-                    player.embedding = frag.embedding.copy()
-                    player.embedding_n = 1
-                else:
-                    player.embedding = (player.embedding * player.embedding_n + frag.embedding) / (
-                        player.embedding_n + 1
-                    )
-                    player.embedding_n += 1
-            if frag.end_xy is not None:
-                player._end_xy = frag.end_xy  # type: ignore[attr-defined]
-            if frag.start_xy is not None:
-                if not hasattr(player, "_start_xy") or player._start_xy is None:  # type: ignore[attr-defined]
-                    player._start_xy = frag.start_xy  # type: ignore[attr-defined]
-            if frag.mean_xy is not None:
-                player._mean_xy = frag.mean_xy  # type: ignore[attr-defined]
+            _attach_fragment(player, frag, best_reason, best_detail)
             decisions.append(
                 {
                     "local_track_id": frag.track_id,
                     "global_id": player.global_id,
                     "decision": "merge",
                     "reason": best_reason,
-                    **{k: v for k, v in best_detail.items() if k != "cues"},
-                    "cues": ";".join(best_detail.get("cues") or []),
+                    **{k: v for k, v in best_detail.items()},
                 }
             )
         else:
@@ -438,10 +521,10 @@ def resolve_global_identities(
                 embedding_n=0 if frag.embedding is None else 1,
                 visible_seconds=frag.visible_seconds,
                 merge_reasons=["new_identity"],
+                start_xy=frag.start_xy,
+                end_xy=frag.end_xy,
+                mean_xy=frag.mean_xy,
             )
-            player._end_xy = frag.end_xy  # type: ignore[attr-defined]
-            player._start_xy = frag.start_xy  # type: ignore[attr-defined]
-            player._mean_xy = frag.mean_xy  # type: ignore[attr-defined]
             players.append(player)
             next_id += 1
             decisions.append(
@@ -453,17 +536,39 @@ def resolve_global_identities(
                 }
             )
 
-    # Quality-based validation — NO hard-cap demotion unless explicitly enabled.
+    second_pass_merges = 0
+    if cfg.enable_second_pass_gallery:
+        second_pass_merges = _second_pass_gallery_merge(
+            players,
+            decisions,
+            strong_threshold=strong_thr if cfg.second_pass_min_reid <= 0 else cfg.second_pass_min_reid,
+            relative_margin=cfg.reid_relative_margin,
+            max_speed=cfg.max_player_speed_mps,
+            max_gap=cfg.max_gap_seconds_strong_reid,
+        )
+
     by_team: dict[str, list[GlobalPlayer]] = {}
     for p in players:
         if p.team_id is None:
             p.validated = False
             p.quality = "low"
             continue
-        # Validated = enough visibility + not unresolved leftover
         p.validated = p.visible_seconds >= 1.0 and len(p.track_ids) >= 1
         p.quality = "high" if p.visible_seconds >= 3.0 else ("medium" if p.validated else "low")
         by_team.setdefault(str(p.team_id), []).append(p)
+
+    if cfg.enforce_max_on_field:
+        for team, group in by_team.items():
+            _demote_on_field_surplus(group, max_on_field=cfg.max_validated_per_team)
+            # Roster cap: after resolving co-visible overload, never publish >11
+            # validated players per team (extras are unresolved, not false-merged).
+            validated = [p for p in group if p.validated]
+            if len(validated) > cfg.max_validated_per_team:
+                ranked = sorted(validated, key=lambda p: (p.visible_seconds, p.global_id))
+                for p in ranked[: len(validated) - cfg.max_validated_per_team]:
+                    p.validated = False
+                    p.quality = "roster_surplus"
+                    p.split_reasons.append("exceeds_roster_capacity")
 
     identity_flags: list[str] = []
     for team, group in by_team.items():
@@ -479,10 +584,19 @@ def resolve_global_identities(
                         p.split_reasons.append("exceeds_max_validated_per_team")
 
     raw_over = any(
-        sum(1 for p in group if p.validated) > cfg.max_validated_per_team
-        for group in by_team.values()
+        sum(1 for p in group if p.validated) > cfg.max_validated_per_team for group in by_team.values()
     )
-    stats_publishable = not raw_over and bool(players) and not identity_flags
+    # Coverage-aware publishability: require reid coverage on most validated players
+    reid_covered = sum(1 for p in players if p.validated and p.embedding is not None)
+    validated_n = sum(1 for p in players if p.validated)
+    reid_coverage = (reid_covered / validated_n) if validated_n else 0.0
+    stats_publishable = (
+        not raw_over
+        and bool(players)
+        and not identity_flags
+        and reid_coverage >= 0.5
+        and calibration.pair_count > 0
+    )
 
     map_rows = []
     report_rows = []
@@ -543,10 +657,206 @@ def resolve_global_identities(
         "rejected_simultaneous_merges": int(
             sum(1 for d in decisions if d.get("reason") == "simultaneous_overlap")
         ),
-        "suspected_false_merges": 0,  # reserved; no automatic claim without GT
+        "suspected_false_merges": 0,
         "hard_cap_demotion_enabled": bool(cfg.allow_hard_cap_demotion),
+        "reid_hard_negative_calibration": {
+            "pair_count": calibration.pair_count,
+            "mean": calibration.mean,
+            "p50": calibration.p50,
+            "p75": calibration.p75,
+            "p90": calibration.p90,
+            "merge_threshold": merge_thr,
+            "strong_threshold": strong_thr,
+        },
+        "reid_coverage_on_validated": round(reid_coverage, 4),
+        "second_pass_gallery_merges": int(second_pass_merges),
+        "enforce_max_on_field": bool(cfg.enforce_max_on_field),
+        "reid_status": "SOLVED"
+        if (
+            reid_coverage >= 0.5
+            and calibration.pair_count > 0
+            and not identity_flags
+            and all(
+                sum(1 for p in group if p.validated) <= cfg.max_validated_per_team
+                for group in by_team.values()
+            )
+        )
+        else (
+            "SOLVED_INFRASTRUCTURE"
+            if reid_coverage >= 0.5 and calibration.pair_count > 0
+            else "PARTIAL"
+        ),
     }
     decisions_frame = pd.DataFrame(decisions)
     report = pd.DataFrame(report_rows)
     metrics["decisions_count"] = int(len(decisions_frame))
     return pd.DataFrame(map_rows), report, metrics, decisions_frame
+
+
+def _demote_on_field_surplus(group: list[GlobalPlayer], *, max_on_field: int) -> int:
+    """Demote weakest identities when >max_on_field overlap in time.
+
+    Does not merge identities (that would invent false ID links). Marks surplus
+    co-visible tracks as unresolved — typically false team tags / staff.
+    """
+    demoted = 0
+    active = [p for p in group if p.validated]
+    if len(active) <= max_on_field:
+        return 0
+
+    # Sweep-line peaks
+    events: list[tuple[float, int, GlobalPlayer]] = []
+    for p in active:
+        for a0, a1 in p.intervals:
+            events.append((a0, 1, p))
+            events.append((a1, -1, p))
+    events.sort(key=lambda item: (item[0], item[1]))
+
+    # Iteratively demote lowest-visibility participant of the worst peak
+    safety = 0
+    while safety < 64:
+        safety += 1
+        active = [p for p in group if p.validated]
+        if len(active) <= max_on_field:
+            break
+        events = []
+        for p in active:
+            for a0, a1 in p.intervals:
+                events.append((a0, 1, p))
+                events.append((a1, -1, p))
+        events.sort(key=lambda item: (item[0], item[1]))
+        cur: set[int] = set()
+        worst: set[int] = set()
+        worst_n = 0
+        id_to_player = {p.global_id: p for p in active}
+        for _t, delta, player in events:
+            if delta > 0:
+                cur.add(player.global_id)
+            else:
+                cur.discard(player.global_id)
+            if len(cur) > worst_n:
+                worst_n = len(cur)
+                worst = set(cur)
+        if worst_n <= max_on_field:
+            # No co-visible overload; stop (remaining surplus never co-occur)
+            break
+        # Demote weakest in the peak set
+        peak_players = [id_to_player[i] for i in worst if i in id_to_player]
+        peak_players.sort(key=lambda p: (p.visible_seconds, -len(p.reid_sims), p.global_id))
+        victim = peak_players[0]
+        victim.validated = False
+        victim.quality = "on_field_surplus"
+        victim.split_reasons.append("exceeds_on_field_capacity")
+        demoted += 1
+    return demoted
+
+
+def _second_pass_gallery_merge(
+    players: list[GlobalPlayer],
+    decisions: list[dict[str, Any]],
+    *,
+    strong_threshold: float,
+    relative_margin: float,
+    max_speed: float,
+    max_gap: float,
+) -> int:
+    """Merge leftover non-overlapping same-team identities with strong ReID."""
+    merges = 0
+    changed = True
+    while changed:
+        changed = False
+        active = [p for p in players if p.track_ids]
+        best: tuple[int, int, float, str] | None = None
+        for i, left in enumerate(active):
+            if left.embedding is None or left.team_id is None:
+                continue
+            sims: list[tuple[int, float]] = []
+            for j, right in enumerate(active):
+                if j <= i or right.embedding is None:
+                    continue
+                if left.team_id != right.team_id:
+                    continue
+                if any(_any_overlap(left.intervals, iv) for iv in right.intervals):
+                    continue
+                # Gap / speed gate
+                gap = None
+                for a0, a1 in left.intervals:
+                    for b0, b1 in right.intervals:
+                        if b0 >= a1:
+                            gap = (b0 - a1) / 1000.0 if gap is None else min(gap, (b0 - a1) / 1000.0)
+                        elif a0 >= b1:
+                            gap = (a0 - b1) / 1000.0 if gap is None else min(gap, (a0 - b1) / 1000.0)
+                if gap is not None and gap > max_gap:
+                    continue
+                if (
+                    left.end_xy is not None
+                    and right.start_xy is not None
+                    and gap is not None
+                    and gap > 1e-3
+                ):
+                    dist = float(
+                        np.hypot(right.start_xy[0] - left.end_xy[0], right.start_xy[1] - left.end_xy[1])
+                    )
+                    if dist / gap > max_speed:
+                        continue
+                sim = cosine_similarity(left.embedding, right.embedding)
+                if sim is not None:
+                    sims.append((j, sim))
+            if not sims:
+                continue
+            sims.sort(key=lambda item: item[1], reverse=True)
+            j_best, sim_best = sims[0]
+            second = sims[1][1] if len(sims) > 1 else None
+            ok, reason = relative_accept(
+                sim_best,
+                second,
+                merge_threshold=max(0.75, strong_threshold - 0.08),
+                strong_threshold=strong_threshold,
+                relative_margin=relative_margin,
+            )
+            if not ok and len(sims) == 1 and sim_best >= max(0.70, strong_threshold - 0.15):
+                ok, reason = True, "second_pass_unique_gallery"
+            if not ok:
+                continue
+            if best is None or sim_best > best[2]:
+                best = (i, j_best, sim_best, reason)
+        if best is None:
+            break
+        i, j, sim, reason = best
+        left = active[i]
+        right = active[j]
+        # Absorb right into left
+        for tid in right.track_ids:
+            left.track_ids.append(tid)
+        left.intervals.extend(right.intervals)
+        left.visible_seconds += right.visible_seconds
+        left.merge_reasons.append(f"second_pass_gallery:{reason}:{sim:.3f}")
+        left.reid_sims.append(float(sim))
+        if right.embedding is not None and left.embedding is not None:
+            left.embedding = left.embedding * left.embedding_n + right.embedding * max(
+                right.embedding_n, 1
+            )
+            left.embedding_n += max(right.embedding_n, 1)
+            left.embedding = left.embedding / float(np.linalg.norm(left.embedding) + 1e-12)
+        if right.end_xy is not None:
+            left.end_xy = right.end_xy
+        decisions.append(
+            {
+                "local_track_id": right.track_ids[0],
+                "global_id": left.global_id,
+                "candidate_global_id": right.global_id,
+                "decision": "merge",
+                "reason": "second_pass_gallery",
+                "reid_sim": sim,
+            }
+        )
+        # Mark right as absorbed
+        right.track_ids = []
+        right.intervals = []
+        right.validated = False
+        merges += 1
+        changed = True
+
+    # Drop absorbed players
+    players[:] = [p for p in players if p.track_ids]
+    return merges

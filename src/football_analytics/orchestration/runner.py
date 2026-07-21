@@ -108,12 +108,13 @@ class PipelineRunner:
                     BallStateStage(self.run_dir, self.config),
                     PossessionStage(self.run_dir, self.config),
                     MetricsStage(self.run_dir, self.config),
-                    AnalyticsRenderStage(self.run_dir, self.config),
                 ]
             )
             if pipeline_name == "mvp2_spatial_analytics":
                 from football_analytics.stages.event_detection import EventDetectionStage
 
+                # MVP-2 has no global identity; render after metrics.
+                stages.append(AnalyticsRenderStage(self.run_dir, self.config))
                 stages.append(EventDetectionStage(self.run_dir, self.config))
             else:
                 from football_analytics.stages.action_inference import ActionInferenceStage
@@ -122,9 +123,11 @@ class PipelineRunner:
                 from football_analytics.stages.opta_analytics import OptaAnalyticsStage
                 from football_analytics.stages.touch_inference import TouchInferenceStage
 
+                # Stable IDs must exist before overlay render (stops ID/label flicker).
                 stages.extend(
                     [
                         GlobalIdentityStage(self.run_dir, self.config),
+                        AnalyticsRenderStage(self.run_dir, self.config),
                         BallTrackingStage(self.run_dir, self.config),
                         TouchInferenceStage(self.run_dir, self.config),
                         ActionInferenceStage(self.run_dir, self.config),
@@ -204,7 +207,6 @@ class PipelineRunner:
                 "ball_state",
                 "possession",
                 "metrics",
-                "analytics_render",
             ]
             if pipeline_name == "mvp2_spatial_analytics":
                 required.extend(
@@ -214,7 +216,7 @@ class PipelineRunner:
                         self.run_dir / "stage_manifests" / "event_detection.json",
                     ]
                 )
-                stage_names.append("event_detection")
+                stage_names.extend(["analytics_render", "event_detection"])
             else:
                 required.extend(
                     [
@@ -241,6 +243,7 @@ class PipelineRunner:
                 stage_names.extend(
                     [
                         "global_identity",
+                        "analytics_render",
                         "ball_tracking",
                         "touch_inference",
                         "action_inference",

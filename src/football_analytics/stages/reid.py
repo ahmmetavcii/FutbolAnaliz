@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from pathlib import Path
 from typing import Any
 
 import numpy as np
 import pandas as pd
 
+from football_analytics.analytics.reid_matching import (
+    crop_quality_score,
+    robust_mean_embedding,
+    torso_crop_xyxy,
+)
 from football_analytics.contracts.schemas import (
     REID_EMBEDDINGS_SCHEMA,
     TRACK_REID_PROTOTYPES_SCHEMA,
@@ -47,24 +51,31 @@ class ReidStage(Stage):
         if person_tracks.empty:
             return self._write_empty(reason="no person tracks")
 
-        usable = set(
-            quality.loc[quality["usable_for_metrics"].fillna(False), "track_id"]
-            .astype(int)
-            .tolist()
-        )
-        if usable:
-            person_tracks = person_tracks[person_tracks["track_id"].isin(usable)]
+        person_tracks = self._filter_tracks_for_reid(person_tracks, quality, cfg)
         if person_tracks.empty:
-            return self._write_empty(reason="no usable person tracks")
+            return self._write_empty(reason="no tracks passed reid coverage gates")
 
-        sample_stride = max(1, int(cfg.get("sample_stride", 5)))
-        max_samples = max(1, int(cfg.get("max_samples_per_track", 20)))
+        sample_stride = max(1, int(cfg.get("sample_stride", 4)))
+        max_samples = max(1, int(cfg.get("max_samples_per_track", 24)))
         min_area = float(
-            cfg.get("min_bbox_area", self.config.get("geometry", {}).get("minimum_bbox_area", 36))
+            cfg.get(
+                "min_bbox_area",
+                self.config.get("geometry", {}).get("minimum_bbox_area", 36),
+            )
         )
         batch_size = max(1, int(cfg.get("batch_size", 32)))
+        use_torso = bool(cfg.get("use_torso_crop", True))
+        image_width = int(cfg.get("assume_width", 1920))
+        image_height = int(cfg.get("assume_height", 1080))
 
-        selected = self._select_samples(person_tracks, sample_stride, max_samples, min_area)
+        selected = self._select_samples(
+            person_tracks,
+            sample_stride=sample_stride,
+            max_samples=max_samples,
+            min_area=min_area,
+            image_width=image_width,
+            image_height=image_height,
+        )
         if not selected:
             return self._write_empty(reason="no crops passed sampling gates")
 
@@ -133,12 +144,27 @@ class ReidStage(Stage):
             image = video_frame.image
             height, width = image.shape[:2]
             for sample in samples:
-                x1 = max(0, min(width - 1, int(round(sample["bbox_x1"]))))
-                y1 = max(0, min(height - 1, int(round(sample["bbox_y1"]))))
-                x2 = max(0, min(width, int(round(sample["bbox_x2"]))))
-                y2 = max(0, min(height, int(round(sample["bbox_y2"]))))
-                if x2 - x1 < 2 or y2 - y1 < 2:
-                    continue
+                if use_torso:
+                    crop_box = torso_crop_xyxy(
+                        (
+                            sample["bbox_x1"],
+                            sample["bbox_y1"],
+                            sample["bbox_x2"],
+                            sample["bbox_y2"],
+                        ),
+                        image_width=width,
+                        image_height=height,
+                    )
+                    if crop_box is None:
+                        continue
+                    x1, y1, x2, y2 = crop_box
+                else:
+                    x1 = max(0, min(width - 1, int(round(sample["bbox_x1"]))))
+                    y1 = max(0, min(height - 1, int(round(sample["bbox_y1"]))))
+                    x2 = max(0, min(width, int(round(sample["bbox_x2"]))))
+                    y2 = max(0, min(height, int(round(sample["bbox_y2"]))))
+                    if x2 - x1 < 2 or y2 - y1 < 2:
+                        continue
                 crop = image[y1:y2, x1:x2]
                 if crop.size == 0:
                     continue
@@ -148,7 +174,7 @@ class ReidStage(Stage):
                     flush()
         flush()
 
-        prototype_rows = self._build_prototypes(embedding_rows)
+        prototype_rows, consistency_by_track = self._build_prototypes(embedding_rows)
 
         embeddings_path = self.run_dir / "reid_embeddings.parquet"
         prototypes_path = self.run_dir / "track_reid_prototypes.parquet"
@@ -163,7 +189,21 @@ class ReidStage(Stage):
             "prototype_tracks": len(prototype_rows),
             "sample_stride": sample_stride,
             "max_samples_per_track": max_samples,
+            "use_torso_crop": use_torso,
+            "coverage_mode": str(cfg.get("coverage_mode", "broad")),
+            "mean_prototype_consistency": float(np.mean(list(consistency_by_track.values())))
+            if consistency_by_track
+            else 0.0,
         }
+        write_json(
+            self.stage_dir / "prototype_consistency.json",
+            {
+                "tracks": [
+                    {"track_id": tid, "consistency": cons}
+                    for tid, cons in sorted(consistency_by_track.items())
+                ]
+            },
+        )
         write_json(self.stage_dir / "metrics.json", metrics)
         return {
             "reid_embeddings": embeddings_path,
@@ -191,16 +231,54 @@ class ReidStage(Stage):
         }
 
     @staticmethod
+    def _filter_tracks_for_reid(
+        person_tracks: pd.DataFrame,
+        quality: pd.DataFrame,
+        cfg: dict[str, Any],
+    ) -> pd.DataFrame:
+        """Broad coverage beyond usable_for_metrics-only tracks."""
+        coverage_mode = str(cfg.get("coverage_mode", "broad")).lower()
+        min_frames = max(1, int(cfg.get("min_track_frames", 5)))
+        quality_by: dict[int, Any] = {}
+        if not quality.empty and "track_id" in quality.columns:
+            for row in quality.itertuples(index=False):
+                quality_by[int(row.track_id)] = row
+
+        keep_ids: set[int] = set()
+        lengths = person_tracks.groupby("track_id").size().to_dict()
+        for track_id, length in lengths.items():
+            tid = int(track_id)
+            qrow = quality_by.get(tid)
+            usable = bool(getattr(qrow, "usable_for_metrics", False)) if qrow is not None else False
+            if coverage_mode == "strict_usable":
+                if usable:
+                    keep_ids.add(tid)
+                continue
+            if usable or int(length) >= min_frames:
+                if qrow is not None:
+                    truncation = float(getattr(qrow, "border_truncation", 0.0) or 0.0)
+                    if truncation > float(cfg.get("max_border_truncation", 0.85)):
+                        continue
+                keep_ids.add(tid)
+
+        if not keep_ids:
+            return person_tracks.iloc[0:0]
+        return person_tracks[person_tracks["track_id"].isin(keep_ids)].copy()
+
+    @staticmethod
     def _select_samples(
         tracks: pd.DataFrame,
+        *,
         sample_stride: int,
         max_samples: int,
         min_area: float,
+        image_width: int,
+        image_height: int,
     ) -> list[dict[str, Any]]:
         selected: list[dict[str, Any]] = []
         for track_id, group in tracks.groupby("track_id"):
             group = group.sort_values("frame_id")
-            kept = 0
+            candidates: list[dict[str, Any]] = []
             for index, row in enumerate(group.itertuples(index=False)):
                 if index % sample_stride != 0:
                     continue
@@ -208,7 +286,13 @@ class ReidStage(Stage):
                 height = float(row.bbox_y2) - float(row.bbox_y1)
                 if width * height < min_area:
                     continue
-                selected.append(
+                quality = crop_quality_score(
+                    (row.bbox_x1, row.bbox_y1, row.bbox_x2, row.bbox_y2),
+                    image_width=image_width,
+                    image_height=image_height,
+                    tracking_confidence=float(row.tracking_confidence),
+                )
+                candidates.append(
                     {
                         "frame_id": int(row.frame_id),
                         "timestamp_ms": float(row.timestamp_ms),
@@ -218,27 +302,32 @@ class ReidStage(Stage):
                         "bbox_x2": float(row.bbox_x2),
                         "bbox_y2": float(row.bbox_y2),
                         "confidence": float(row.tracking_confidence),
+                        "quality": quality,
                     }
                 )
-                kept += 1
-                if kept >= max_samples:
-                    break
+            if not candidates:
+                continue
+            candidates.sort(key=lambda item: item["quality"], reverse=True)
+            picked = candidates[:max_samples]
+            picked.sort(key=lambda item: item["frame_id"])
+            selected.extend(picked)
         return selected
 
     def _build_prototypes(
         self, embedding_rows: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    ) -> tuple[list[dict[str, Any]], dict[int, float]]:
         by_track: dict[int, list[dict[str, Any]]] = defaultdict(list)
         for row in embedding_rows:
             by_track[int(row["track_id"])].append(row)
         prototypes: list[dict[str, Any]] = []
+        consistency_by_track: dict[int, float] = {}
         for track_id, rows in sorted(by_track.items()):
-            matrix = np.asarray([row["embedding"] for row in rows], dtype=np.float32)
-            mean = matrix.mean(axis=0)
-            norm = float(np.linalg.norm(mean))
-            if norm > 1e-12:
-                mean = mean / norm
+            vectors = [np.asarray(row["embedding"], dtype=np.float32) for row in rows]
+            mean, consistency = robust_mean_embedding(vectors)
+            if mean is None:
+                continue
             confidence = float(np.mean([row["confidence"] for row in rows]))
+            confidence = float(confidence * (0.5 + 0.5 * consistency))
             frame_id = int(rows[len(rows) // 2]["frame_id"])
             timestamp_ms = float(rows[len(rows) // 2]["timestamp_ms"])
             prototypes.append(
@@ -247,7 +336,7 @@ class ReidStage(Stage):
                         self.run_dir,
                         frame_id,
                         timestamp_ms,
-                        "sn_reid/osnet_mean",
+                        "sn_reid/osnet_robust_median",
                         confidence,
                         True,
                     ),
@@ -258,4 +347,5 @@ class ReidStage(Stage):
                     "model_name": str(rows[0]["model_name"]),
                 }
             )
-        return prototypes
+            consistency_by_track[int(track_id)] = float(consistency)
+        return prototypes, consistency_by_track

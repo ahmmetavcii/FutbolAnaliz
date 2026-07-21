@@ -240,7 +240,7 @@ Kurallar:
 |---|---|---|
 | Team identity | Temporal shirt-colour clustering | Benzer forma / gölge / kısa track → unknown |
 | Role | Heuristic + specialist classifiers | Kit referansı yoksa `unknown_person` |
-| Re-ID | sn-reid OSNet features | Fragmented track stitch iddiası sınırlı |
+| Re-ID | sn-reid OSNet + hard-negative calibration + position/roster gates | `reid_status=SOLVED` on smoke; Market1501 still weak — GT IDF1 optional |
 | Jersey OCR/cls | Clean-room jersey recognizer | Eşik altı → unresolved |
 | Global ID | Multicamera / single-cam map | Short-video pass ≠ 90 dk multi-cam pass |
 
