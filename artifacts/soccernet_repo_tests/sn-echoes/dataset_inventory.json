@@ -1,0 +1,102 @@
+{
+  "dataset_path": "/home/ahmet/projects/soccernet/sn-echoes/Dataset",
+  "variants": {
+    "whisper_v1": {
+      "json_files": 1100,
+      "segments": 780160,
+      "zero_byte_files": 0,
+      "empty_json_segments": 50,
+      "leagues": [
+        "england_epl",
+        "europe_uefa-champions-league",
+        "france_ligue-1",
+        "germany_bundesliga",
+        "italy_serie-a",
+        "spain_laliga"
+      ],
+      "num_leagues": 6,
+      "num_seasons": 19,
+      "num_matches": 550
+    },
+    "whisper_v1_en": {
+      "json_files": 734,
+      "segments": 563064,
+      "zero_byte_files": 0,
+      "empty_json_segments": 4,
+      "leagues": [
+        "england_epl",
+        "europe_uefa-champions-league",
+        "france_ligue-1",
+        "germany_bundesliga",
+        "italy_serie-a",
+        "spain_laliga"
+      ],
+      "num_leagues": 6,
+      "num_seasons": 18,
+      "num_matches": 367
+    },
+    "whisper_v2": {
+      "json_files": 1100,
+      "segments": 761240,
+      "zero_byte_files": 0,
+      "empty_json_segments": 45,
+      "leagues": [
+        "england_epl",
+        "europe_uefa-champions-league",
+        "france_ligue-1",
+        "germany_bundesliga",
+        "italy_serie-a",
+        "spain_laliga"
+      ],
+      "num_leagues": 6,
+      "num_seasons": 19,
+      "num_matches": 550
+    },
+    "whisper_v2_en": {
+      "json_files": 718,
+      "segments": 538990,
+      "zero_byte_files": 0,
+      "empty_json_segments": 0,
+      "leagues": [
+        "england_epl",
+        "europe_uefa-champions-league",
+        "france_ligue-1",
+        "germany_bundesliga",
+        "italy_serie-a",
+        "spain_laliga"
+      ],
+      "num_leagues": 6,
+      "num_seasons": 18,
+      "num_matches": 367
+    },
+    "whisper_v3": {
+      "json_files": 1100,
+      "segments": 923221,
+      "zero_byte_files": 0,
+      "empty_json_segments": 56,
+      "leagues": [
+        "england_epl",
+        "europe_uefa-champions-league",
+        "france_ligue-1",
+        "germany_bundesliga",
+        "italy_serie-a",
+        "spain_laliga"
+      ],
+      "num_leagues": 6,
+      "num_seasons": 19,
+      "num_matches": 550
+    }
+  },
+  "totals": {
+    "json_files": 4752,
+    "segments": 3566675,
+    "zero_byte_files": 0,
+    "empty_json_segments": 155,
+    "unparseable_json": 0,
+    "encoding_problem_files": 0
+  },
+  "leagues_unique": 6,
+  "league_dirs_total": 30,
+  "seasons_total": 93,
+  "matches_total": 2384
+}

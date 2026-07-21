@@ -1,0 +1,12 @@
+{
+  "env_used_for_repo": "sn-calibration (conda)",
+  "python": "3.10.20",
+  "torch": "2.1.2+cu121",
+  "torchvision": "0.16.2+cu121",
+  "cuda_available": true,
+  "numpy": "1.26.4",
+  "opencv": "4.8.1",
+  "pillow": "9.5.0",
+  "ai_dev_not_used_for_run": "ai-dev verified separately (torch 2.11.0+cu128); NOT modified",
+  "repo_requirements": "torch~=1.10, torchvision~=0.11.1, numpy~>1.21, opencv~=4.5.5 (sn-calibration env is torch 2.1.2/numpy 1.26/opencv 4.8 - closer, used for testing)"
+}

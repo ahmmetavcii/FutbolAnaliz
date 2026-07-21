@@ -1,0 +1,49 @@
+# Independent publishability gates. Do not collapse into a single misleading flag.
+# Without completed ground truth, accuracy-dependent flags stay false.
+
+ball:
+  min_reviewed_fraction: 1.0
+  min_frames: 150
+  min_precision: 0.70
+  min_recall: 0.60
+  min_candidate_coverage: 0.50
+  min_trajectory_coverage: 0.50
+
+identity:
+  min_reviewed_fraction: 1.0
+  min_gt_players: 8
+  min_idf1: 0.50
+  max_id_switches_per_player: 2.0
+  max_validated_per_team: 11
+
+touch:
+  min_reviewed_fraction: 1.0
+  min_precision: 0.70
+
+calibration:
+  min_frame_coverage: 0.50
+  min_measured_coverage: 0.25
+  min_continuous_calibrated_seconds: 2.0
+  max_reprojection_error: 8.0
+  min_player_position_coverage: 0.40
+
+physical_metrics:
+  require_calibration_publishable: true
+  require_speed_spike_audit_pass: true
+  min_player_position_coverage: 0.40
+  max_speed_spike_candidates: 0
+
+tactical_metrics:
+  require_calibration_publishable: true
+  require_identity_publishable: false
+
+action_stats:
+  require_identity_publishable: true
+  require_touch_publishable: false
+
+overall:
+  # All of these must be true for overall_publishable
+  require:
+    - ball_detection_publishable
+    - identity_publishable
+    - calibration_publishable

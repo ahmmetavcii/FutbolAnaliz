@@ -1,0 +1,18 @@
+{
+  "python.defaultInterpreterPath": "/home/ahmet/miniconda3/envs/ai-dev/bin/python",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "ruff.enable": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll.ruff": "explicit"
+    }
+  },
+  "isort.args": [
+    "--profile",
+    "black"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "repo_weights": [
+    {
+      "path": "/home/ahmet/projects/soccernet/sn-gamestate/pretrained_models/calibration/mean.npy",
+      "size": 152,
+      "sha256": "8dcd1f96b2486853498b6e38a0eb344cda9c272cd0fe87adb84ec0a09e244a36",
+      "role": "calibration normalization (not a model)"
+    },
+    {
+      "path": "/home/ahmet/projects/soccernet/sn-gamestate/pretrained_models/calibration/std.npy",
+      "size": 152,
+      "sha256": "49dac1cfa5ab2f197a64332c4fd7dc08335dd46d31244acc0e4a03686241fe79",
+      "role": "calibration normalization (not a model)"
+    }
+  ],
+  "required_but_missing": [
+    {
+      "module": "bbox_detector",
+      "model": "YOLOv8 (ultralytics)",
+      "source": "auto-download at runtime",
+      "present": false
+    },
+    {
+      "module": "reid",
+      "model": "prtreid/bpbreid",
+      "source": "auto-download",
+      "present": false
+    },
+    {
+      "module": "calibration/pitch",
+      "model": "nbjw_calib HRNetv2-w48",
+      "source": "auto-download",
+      "present": false
+    },
+    {
+      "module": "jersey_number_detect",
+      "model": "mmocr",
+      "source": "auto-download",
+      "present": false
+    }
+  ],
+  "unrelated_local_weights_not_usable": [
+    {
+      "path": "/home/ahmet/models/yolo11n.pt",
+      "size": 5613764,
+      "usable": false,
+      "reason": "different pipeline; TrackLab expects its own auto-managed weights"
+    },
+    {
+      "path": "/home/ahmet/models/sn-banner/SV_lines.pth",
+      "size": 264857893,
+      "usable": false,
+      "reason": "different pipeline; TrackLab expects its own auto-managed weights"
+    }
+  ],
+  "conclusion": "Repo ships no model weights (only calibration mean/std/Radar). Required weights auto-downloaded by TrackLab (forbidden). Real inference BLOCKED_CHECKPOINT_MISSING."
+}

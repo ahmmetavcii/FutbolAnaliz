@@ -1,0 +1,7 @@
+{
+  "metric": "GS-HOTA (via tracklab TrackEval)",
+  "repo_evaluator_ran": false,
+  "reason": "tracklab (and TrackEval GS-HOTA) not installed; official dataset class + GT required. Cannot run real GS-HOTA.",
+  "synthetic_fixture": "GSR-schema prediction/GT fixtures (perfect/bbox-shift/id-switch/wrong-team/wrong-role/wrong-jersey/missed) are structurally expressible in the documented schema, but the GS-HOTA metric itself could not be computed without the evaluator.",
+  "status": "BLOCKED"
+}

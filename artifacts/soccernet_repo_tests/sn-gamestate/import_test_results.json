@@ -1,0 +1,15 @@
+{
+  "env": "sn-gamestate-python (py3.9)",
+  "compileall": "PASS (sn_gamestate + plugins, syntax OK)",
+  "imports": {
+    "sn_gamestate": "OK",
+    "sn_gamestate.config_finder": "OK",
+    "tracklab": "FAIL: ModuleNotFoundError (dep not installed)",
+    "sn_gamestate.jersey.easyocr_api": "FAIL: No module named 'pandas'",
+    "sn_gamestate.reid.prtreid_api": "FAIL: No module named 'numpy'",
+    "sn_gamestate.calibration.nbjw_calib": "FAIL: No module named 'PIL'"
+  },
+  "unit_tests": "none in repo",
+  "cli_tracklab": "unavailable (tracklab not installed)",
+  "failure_reason": "MISSING DEPENDENCIES (not syntax/paths). Env deps never installed; offline install forbidden."
+}

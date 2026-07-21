@@ -1,0 +1,25 @@
+{
+  "video_path": "/mnt/c/football_data/videos/test_clips/football.mp4",
+  "video_name": "football",
+  "seed": 42,
+  "frame_count": 165,
+  "frame_width": 1920,
+  "frame_height": 1080,
+  "fps": 25.0,
+  "strata": [
+    "camera_motion",
+    "clear_visible",
+    "crowded_box",
+    "false_positive_risk",
+    "fully_missing",
+    "motion_blur",
+    "partial_occluded",
+    "small_distant",
+    "uniform_fill"
+  ],
+  "ball_gt_csv": "configs/evaluation/short_clip_gt_template/football_ball/ball_gt.csv",
+  "frames_dir": "configs/evaluation/short_clip_gt_template/football_ball/frames",
+  "predictions_dir": "configs/evaluation/short_clip_gt_template/football_ball/predictions",
+  "status": "GT_INCOMPLETE",
+  "note": "Annotations empty; candidate overlays are predictions only, not ground truth."
+}

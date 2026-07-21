@@ -1,0 +1,21 @@
+{
+  "files_checked": 4752,
+  "files_with_issues": 0,
+  "segments_checked": 3566675,
+  "issues": {
+    "non_numeric_start": 0,
+    "non_numeric_end": 0,
+    "end_before_start": 0,
+    "negative_time": 0,
+    "nan_or_inf": 0,
+    "text_not_string": 0,
+    "text_empty": 530,
+    "malformed_segment_value": 0,
+    "duplicate_identical_segment": 0,
+    "order_not_monotonic_files": 0,
+    "adjacent_overlap_segments": 2107,
+    "reverse_order_segments": 0
+  },
+  "parse_errors": [],
+  "issue_examples": []
+}

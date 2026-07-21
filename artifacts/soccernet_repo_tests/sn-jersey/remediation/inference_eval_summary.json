@@ -1,0 +1,59 @@
+{
+  "checkpoint": "/home/ahmet/models/jersey_recognition_v1_best.pt",
+  "sha256": "7060d422cf30b3ae7ebeb8b09a3fa126d72aaece65f03487ff04a4ec14cebfbc",
+  "epochs_completed": 20,
+  "best_val_accuracy": 0.5732484076433121,
+  "best_val_loss": 2.127904551803686,
+  "val_known_tracklets": 157,
+  "val_known_accuracy_argmax": 0.5732484076433121,
+  "val_metrics_threshold0": {
+    "samples": 157,
+    "accuracy": 0.5732484076433121,
+    "known_accuracy": 0.5732484076433121,
+    "unknown_precision": 0.0,
+    "unknown_recall": 0.0,
+    "macro_f1_present_classes": 0.5546111114738566
+  },
+  "infer20_raw_accuracy": 0.55,
+  "infer20_thresholded_accuracy": 0.3,
+  "random_baseline_acc": 0.012738853503184714,
+  "beats_random": true,
+  "predictions_csv": "artifacts/soccernet_repo_tests/sn-jersey/remediation/predictions.csv",
+  "preview_mp4": "artifacts/soccernet_repo_tests/sn-jersey/remediation/jersey_tracklet_preview.mp4",
+  "preview_annotated_mp4": "artifacts/soccernet_repo_tests/sn-jersey/remediation/jersey_preview_annotated.mp4",
+  "history_tail": [
+    {
+      "epoch": 17,
+      "train": {
+        "loss": 0.7079813508220197,
+        "accuracy": 0.9411764705882353
+      },
+      "validation": {
+        "loss": 2.129600084511338,
+        "accuracy": 0.5668789808917197
+      }
+    },
+    {
+      "epoch": 18,
+      "train": {
+        "loss": 0.6918268829343504,
+        "accuracy": 0.9457900807381776
+      },
+      "validation": {
+        "loss": 2.1305178806280636,
+        "accuracy": 0.5732484076433121
+      }
+    },
+    {
+      "epoch": 19,
+      "train": {
+        "loss": 0.7122882205859737,
+        "accuracy": 0.9469434832756632
+      },
+      "validation": {
+        "loss": 2.127904551803686,
+        "accuracy": 0.5732484076433121
+      }
+    }
+  ]
+}

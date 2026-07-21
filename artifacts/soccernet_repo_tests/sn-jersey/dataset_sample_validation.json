@@ -1,0 +1,208 @@
+{
+  "splits": {
+    "train": {
+      "split": "train",
+      "sampled_tracklets": 100,
+      "per_tracklet_max": 5,
+      "seed": 1234,
+      "images_checked": 500,
+      "zero_byte": 0,
+      "corrupt_unreadable": 0,
+      "decoded_ok": 500,
+      "width_min": 3,
+      "width_max": 151,
+      "height_min": 8,
+      "height_max": 188,
+      "variable_sizes": true,
+      "examples": [
+        {
+          "tracklet": "11",
+          "file": "11_1.jpg",
+          "w": 24,
+          "h": 78,
+          "gt_number": 25
+        },
+        {
+          "tracklet": "11",
+          "file": "11_2.jpg",
+          "w": 25,
+          "h": 77,
+          "gt_number": 25
+        },
+        {
+          "tracklet": "11",
+          "file": "11_3.jpg",
+          "w": 25,
+          "h": 77,
+          "gt_number": 25
+        },
+        {
+          "tracklet": "11",
+          "file": "11_4.jpg",
+          "w": 26,
+          "h": 76,
+          "gt_number": 25
+        },
+        {
+          "tracklet": "11",
+          "file": "11_5.jpg",
+          "w": 27,
+          "h": 76,
+          "gt_number": 25
+        },
+        {
+          "tracklet": "15",
+          "file": "15_1.jpg",
+          "w": 28,
+          "h": 109,
+          "gt_number": 8
+        },
+        {
+          "tracklet": "15",
+          "file": "15_2.jpg",
+          "w": 28,
+          "h": 109,
+          "gt_number": 8
+        },
+        {
+          "tracklet": "15",
+          "file": "15_3.jpg",
+          "w": 28,
+          "h": 109,
+          "gt_number": 8
+        },
+        {
+          "tracklet": "15",
+          "file": "15_4.jpg",
+          "w": 28,
+          "h": 109,
+          "gt_number": 8
+        },
+        {
+          "tracklet": "15",
+          "file": "15_5.jpg",
+          "w": 28,
+          "h": 109,
+          "gt_number": 8
+        },
+        {
+          "tracklet": "29",
+          "file": "29_1.jpg",
+          "w": 61,
+          "h": 73,
+          "gt_number": -1
+        },
+        {
+          "tracklet": "29",
+          "file": "29_2.jpg",
+          "w": 62,
+          "h": 74,
+          "gt_number": -1
+        }
+      ],
+      "distinct_size_count": 341
+    },
+    "test": {
+      "split": "test",
+      "sampled_tracklets": 100,
+      "per_tracklet_max": 5,
+      "seed": 1234,
+      "images_checked": 500,
+      "zero_byte": 0,
+      "corrupt_unreadable": 0,
+      "decoded_ok": 500,
+      "width_min": 5,
+      "width_max": 171,
+      "height_min": 6,
+      "height_max": 201,
+      "variable_sizes": true,
+      "examples": [
+        {
+          "tracklet": "11",
+          "file": "11_1.jpg",
+          "w": 37,
+          "h": 105,
+          "gt_number": 31
+        },
+        {
+          "tracklet": "11",
+          "file": "11_2.jpg",
+          "w": 37,
+          "h": 105,
+          "gt_number": 31
+        },
+        {
+          "tracklet": "11",
+          "file": "11_3.jpg",
+          "w": 37,
+          "h": 105,
+          "gt_number": 31
+        },
+        {
+          "tracklet": "11",
+          "file": "11_4.jpg",
+          "w": 37,
+          "h": 106,
+          "gt_number": 31
+        },
+        {
+          "tracklet": "11",
+          "file": "11_5.jpg",
+          "w": 37,
+          "h": 106,
+          "gt_number": 31
+        },
+        {
+          "tracklet": "15",
+          "file": "15_1.jpg",
+          "w": 29,
+          "h": 119,
+          "gt_number": 36
+        },
+        {
+          "tracklet": "15",
+          "file": "15_2.jpg",
+          "w": 29,
+          "h": 119,
+          "gt_number": 36
+        },
+        {
+          "tracklet": "15",
+          "file": "15_3.jpg",
+          "w": 29,
+          "h": 119,
+          "gt_number": 36
+        },
+        {
+          "tracklet": "15",
+          "file": "15_4.jpg",
+          "w": 29,
+          "h": 119,
+          "gt_number": 36
+        },
+        {
+          "tracklet": "15",
+          "file": "15_5.jpg",
+          "w": 29,
+          "h": 119,
+          "gt_number": 36
+        },
+        {
+          "tracklet": "29",
+          "file": "29_1.jpg",
+          "w": 66,
+          "h": 125,
+          "gt_number": -1
+        },
+        {
+          "tracklet": "29",
+          "file": "29_2.jpg",
+          "w": 63,
+          "h": 126,
+          "gt_number": -1
+        }
+      ],
+      "distinct_size_count": 371
+    }
+  }
+}

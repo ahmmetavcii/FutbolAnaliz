@@ -1,0 +1,30 @@
+{
+  "repo_defines_model": false,
+  "required_checkpoint": "NONE declared by repo (no model architecture in repo)",
+  "compatible_jersey_recognition_checkpoint_found": false,
+  "jersey_checkpoints_local": [],
+  "unrelated_models_found_not_usable": [
+    {
+      "path": "/home/ahmet/models/yolo11n.pt",
+      "size": 5613764,
+      "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+      "belongs_to": "detector / sn-banner",
+      "usable_for_jersey_recognition": false
+    },
+    {
+      "path": "/home/ahmet/models/sn-banner/SV_lines.pth",
+      "size": 264857893,
+      "sha256": "2751242917f8c0f858a396e0cfe4521be39fe07bf049590eb21714526acecac1",
+      "belongs_to": "detector / sn-banner",
+      "usable_for_jersey_recognition": false
+    },
+    {
+      "path": "/home/ahmet/models/sn-banner/SV_kp.pth",
+      "size": 264964645,
+      "sha256": "7ea78fa76aaf94976a8eca428d6e3c59697a93430cba1a4603e20284b61f5113",
+      "belongs_to": "detector / sn-banner",
+      "usable_for_jersey_recognition": false
+    }
+  ],
+  "conclusion": "No jersey-number recognition checkpoint exists and the repo defines no model, so recognition inference is BLOCKED. No random/dummy/unrelated weights used."
+}

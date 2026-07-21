@@ -1,0 +1,30 @@
+{
+  "input_reshaped": [
+    32,
+    3,
+    64,
+    64
+  ],
+  "devices": {
+    "cpu": {
+      "output_shape": [
+        32,
+        1000
+      ],
+      "has_nan": false,
+      "has_inf": false,
+      "runtime_s": 0.0722
+    },
+    "cuda": {
+      "output_shape": [
+        32,
+        1000
+      ],
+      "has_nan": false,
+      "has_inf": false,
+      "runtime_s": 0.5619,
+      "peak_vram_mb": 65.5
+    }
+  },
+  "note": "GENERIC resnet18(weights=None), NOT sn-jersey model. MODEL_ARCHITECTURE_SMOKE only; not recognition."
+}

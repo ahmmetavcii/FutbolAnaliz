@@ -1,0 +1,11 @@
+{
+  "official_SoccerNetGS_present": false,
+  "expected_path": "sn-gamestate/data/SoccerNetGS (data/ dir absent)",
+  "examples_predictions": {
+    "file": "examples_predictions/SoccerNetGS-test.zip",
+    "size": 69319587,
+    "content": "per-video prediction JSONs (tracklab/SNGS-*.json), used read-only for schema"
+  },
+  "local_gt_for_eval": false,
+  "conclusion": "Official Game State dataset not present (NDA/official download forbidden). Only example prediction JSONs available for schema inspection."
+}

@@ -1,0 +1,21 @@
+system:
+  project_root: /home/ahmet/projects/football-analytics
+  soccernet_root: /home/ahmet/projects/soccernet
+  third_party_root: /home/ahmet/projects/third-party
+  active_models: /home/ahmet/models
+  workspace: /home/ahmet/workspace
+  runs: /home/ahmet/workspace/runs
+  staging: /home/ahmet/workspace/staging
+  cache: /home/ahmet/workspace/cache
+
+storage:
+  ssd_root: /mnt/c/football_data
+  raw_matches: /mnt/c/football_data/videos/raw_matches
+  test_clips: /mnt/c/football_data/videos/test_clips
+  datasets: /mnt/c/football_data/datasets
+  results: /mnt/c/football_data/results
+  rendered_outputs: /mnt/c/football_data/rendered_outputs
+  reports: /mnt/c/football_data/reports
+  model_archive: /mnt/c/football_data/model_archive
+  experiments_archive: /mnt/c/football_data/experiments_archive
+  backups: /mnt/c/football_data/backups

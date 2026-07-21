@@ -1,0 +1,39 @@
+{
+  "subset": "test[:50]",
+  "n_gt": 50,
+  "n_minus1_in_subset": 15,
+  "metric": "accuracy (documented EvalAI metric)",
+  "scenarios": {
+    "perfect": {
+      "total": 50,
+      "correct": 50,
+      "missing": 0,
+      "accuracy": 1.0
+    },
+    "wrong_number": {
+      "total": 50,
+      "correct": 15,
+      "missing": 0,
+      "accuracy": 0.3
+    },
+    "all_minus1": {
+      "total": 50,
+      "correct": 15,
+      "missing": 0,
+      "accuracy": 0.3
+    },
+    "missing_half": {
+      "total": 50,
+      "correct": 25,
+      "missing": 25,
+      "accuracy": 0.5
+    },
+    "predict_all_minus1_check": {
+      "total": 50,
+      "correct": 15,
+      "missing": 0,
+      "accuracy": 0.3
+    }
+  },
+  "separates_perfect_from_broken": true
+}

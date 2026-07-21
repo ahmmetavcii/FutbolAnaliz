@@ -1,0 +1,24 @@
+{
+  "ai_dev": {
+    "python": "3.10.20",
+    "torch": "2.11.0+cu128",
+    "note": "verified; INCOMPATIBLE with repo (<3.10, torch1.13); lacks tracklab; NOT modified"
+  },
+  "sn_gamestate_python": {
+    "python": "3.9.23",
+    "installed_packages": [
+      "pip",
+      "setuptools",
+      "uv",
+      "wheel"
+    ],
+    "torch": "MISSING",
+    "tracklab": "MISSING",
+    "numpy": "MISSING",
+    "mmocr": "MISSING",
+    "prtreid": "MISSING",
+    "easyocr": "MISSING",
+    "note": "Correct Python (3.9) but dependencies never installed; only sn_gamestate package shell. Offline install of torch1.13+openmmlab+git deps forbidden by rules."
+  },
+  "conclusion": "No runnable environment for real inference/model-forward; installing deps requires internet + heavy builds (forbidden)."
+}

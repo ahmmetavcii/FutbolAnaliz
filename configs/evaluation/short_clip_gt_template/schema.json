@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "players_csv": "gt_players.csv",
+  "ball_csv": "gt_ball.csv",
+  "touches_csv": "gt_touches.csv",
+  "passes_csv": "gt_passes.csv",
+  "identity_csv": "gt_identity.csv"
+}

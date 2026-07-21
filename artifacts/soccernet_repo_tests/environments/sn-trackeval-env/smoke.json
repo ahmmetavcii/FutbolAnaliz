@@ -1,0 +1,1 @@
+{"python": "3.10.20 | packaged by conda-forge | (main, Jun 11 2026, 03:31:56) [GCC 14.3.0]", "torch": null, "cuda_available": null, "torch_required": false, "trackeval": "/home/ahmet/projects/soccernet/sn-trackeval/trackeval/__init__.py", "pyarrow": "25.0.0"}

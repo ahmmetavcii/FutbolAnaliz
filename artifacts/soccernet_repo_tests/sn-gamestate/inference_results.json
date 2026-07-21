@@ -1,0 +1,18 @@
+{
+  "status": "BLOCKED",
+  "ran": false,
+  "reasons": [
+    "no functional environment (deps uninstalled, offline install forbidden)",
+    "required model checkpoints not present (auto-download forbidden)",
+    "official SoccerNetGS dataset not present"
+  ],
+  "substages": {
+    "bbox_detector": "BLOCKED",
+    "reid": "BLOCKED",
+    "track": "BLOCKED",
+    "calibration": "BLOCKED",
+    "jersey_number_detect": "BLOCKED",
+    "team": "BLOCKED"
+  },
+  "note": "20s clip not created because no stage could run; not run with random weights."
+}

@@ -1,0 +1,134 @@
+{
+  "generated_at": "2026-07-18T15:14:40.015888+00:00",
+  "components": {
+    "SoccerNet SDK": {
+      "import": true,
+      "downloader_import": true,
+      "train_dir": true,
+      "test_dir": true,
+      "gt_json_parsed": true,
+      "deterministic_decode_ok": true,
+      "zero_byte_count": 0,
+      "zero_byte_ok": true
+    },
+    "sn-trackeval": {
+      "original_implementation": "PASS",
+      "compatible_implementation": "PASS",
+      "scenarios": {
+        "perfect": {
+          "artifact": "/home/ahmet/projects/football-analytics/artifacts/soccernet_repo_tests/sn-trackeval/remediation/perfect/summary.json",
+          "exists": true,
+          "keys": [
+            "metrics",
+            "sequence",
+            "tracker"
+          ]
+        },
+        "id_switch": {
+          "artifact": "/home/ahmet/projects/football-analytics/artifacts/soccernet_repo_tests/sn-trackeval/remediation/id_switch/summary.json",
+          "exists": true,
+          "keys": [
+            "metrics",
+            "sequence",
+            "tracker"
+          ]
+        },
+        "fp": {
+          "artifact": "/home/ahmet/projects/football-analytics/artifacts/soccernet_repo_tests/sn-trackeval/remediation/fp/summary.json",
+          "exists": true,
+          "keys": [
+            "metrics",
+            "sequence",
+            "tracker"
+          ]
+        },
+        "fn": {
+          "artifact": "/home/ahmet/projects/football-analytics/artifacts/soccernet_repo_tests/sn-trackeval/remediation/fn/summary.json",
+          "exists": true,
+          "keys": [
+            "metrics",
+            "sequence",
+            "tracker"
+          ]
+        }
+      },
+      "scenario_summary_exists": true,
+      "scenario_summary_metrics_present": true,
+      "hota_mota_idf1_present": true,
+      "official_leaderboard_status": "NOT_RUN_NO_OFFICIAL_GT"
+    },
+    "sn-echoes": {
+      "license_status": "LICENSE_REVIEW_REQUIRED",
+      "json_file_count": 4752,
+      "json_count_ok": true,
+      "full_validation_artifact": true,
+      "total_segments": 3566675,
+      "streaming_reader_segments": 1880,
+      "streaming_reader_raw_segments": 1880,
+      "streaming_reader_ok": true,
+      "stats_py_exit": 0,
+      "stats_py_ok": true
+    },
+    "sn-calibration": {
+      "original_implementation_status": "ORIGINAL_MODEL_PASS",
+      "original_valid_frames": 5,
+      "original_5_frames_ok": true,
+      "original_homography_invertible_finite": true,
+      "compatible_5frame_valid_checked": 5,
+      "compatible_homography_conf_reproj_finite": true,
+      "compatible_750_valid": 682,
+      "compatible_750_total": 750,
+      "compatible_implementation_status": "COMPATIBLE_REPLACEMENT_PASS"
+    },
+    "sn-jersey": {
+      "implementation": "clean_room_football_analytics",
+      "original_implementation_status": "N/A_README_ONLY",
+      "compatible_implementation_status": "PASS",
+      "checkpoint_loaded": true,
+      "val_beats_random": true,
+      "known20_inference": true,
+      "known20_accuracy": 0.55,
+      "preview_inference_ran": true,
+      "preview_pred": -1,
+      "preview_gt": 10,
+      "preview_confidence": 0.1309,
+      "recheck_artifact": "/home/ahmet/projects/football-analytics/artifacts/soccernet_repo_tests/sn-jersey/remediation/final_recheck.json"
+    },
+    "sn-gamestate": {
+      "original_implementation_status": "BLOCKED_RUNTIME_OOM",
+      "compatible_implementation_status": "COMPATIBLE_IMPLEMENTATION_PASS",
+      "json_exists": true,
+      "prediction_count": 10601,
+      "prediction_count_ok": true,
+      "distinct_frames": 750,
+      "frame_count_ok": true,
+      "bbox_valid": true,
+      "pitch_finite_on_valid": true
+    }
+  },
+  "cross_checks": {
+    "regression_artifacts_present": true,
+    "all_json_csv_open": true,
+    "bad_files": [],
+    "all_mp4_open": true,
+    "contact_sheet_open": true,
+    "xlsx_files": [],
+    "status_json_repos": [
+      "SoccerNet SDK",
+      "sn-trackeval",
+      "sn-echoes",
+      "sn-calibration",
+      "sn-jersey",
+      "sn-gamestate"
+    ],
+    "status_all_technical_pass": true,
+    "status_gamestate_original_blocked": true,
+    "status_calibration_original_pass": true,
+    "jersey_dataset_report_present": true,
+    "jersey_dataset_report_pass": true,
+    "preview_and_contact_present": true
+  },
+  "tests_passed": 40,
+  "tests_failed": 0,
+  "overall": "PASS"
+}

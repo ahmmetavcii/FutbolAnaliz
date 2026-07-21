@@ -1,0 +1,39 @@
+seed: 42
+
+dataset:
+  root: /mnt/c/football_data/datasets/SoccerNet/jersey-2023
+  image_size: [128, 64]
+  num_frames: 8
+  val_fraction: 0.15
+  # Keep unknown class in the head, but train primarily on known numbers.
+  include_unknown: false
+  # Full known train set after split (~870); null uses all available IDs.
+  train_subset: null
+  val_subset: null
+
+model:
+  num_classes: 101
+  width_mult: 1.0
+  dropout: 0.25
+  pretrained: true
+
+training:
+  epochs: 20
+  batch_size: 16
+  learning_rate: 0.0002
+  weight_decay: 0.0001
+  label_smoothing: 0.02
+  balanced_class_weights: true
+  grad_clip: 1.0
+  early_stopping_patience: 6
+  output_dir: artifacts/jersey
+  resume: false
+
+inference:
+  batch_size: 16
+  confidence_threshold: 0.35
+
+runtime:
+  device: auto
+  workers: 2
+  mixed_precision: true

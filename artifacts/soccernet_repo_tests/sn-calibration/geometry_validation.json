@@ -1,0 +1,399 @@
+{
+  "pitch_length_m": 105.0,
+  "pitch_width_m": 68.0,
+  "num_pitch_points": 39,
+  "cases": [
+    {
+      "case": "cam1_center",
+      "true": {
+        "fx": 1400,
+        "fy": 1400,
+        "pan_deg": 0.0,
+        "tilt_deg": 77.34930234266115,
+        "roll_deg": 0.0,
+        "position": [
+          0.0,
+          -55.0,
+          12.0
+        ]
+      },
+      "homography_det": -176.92509925422655,
+      "homography_invertible": true,
+      "homography_inv_ok": true,
+      "from_homography_success": true,
+      "recovered": {
+        "fx": 1400.0000000000243,
+        "fy": 1400.0000000001987,
+        "pan_deg": -0.0,
+        "tilt_deg": -77.34930234266288,
+        "roll_deg": -0.0,
+        "position": [
+          0.0,
+          -54.99999999999957,
+          11.999999999998527
+        ]
+      },
+      "reproj_pre_refine_px": 7.683693391222682,
+      "refined": true,
+      "reprojection_error_px": {
+        "mean": 13.844227534265537,
+        "max": 71.69234030017813,
+        "n_points": 39,
+        "n_gt_in_image_bounds": 0
+      },
+      "all_finite": true,
+      "focal_recovery_rel_err": 1.737784519458988e-14,
+      "to_json_parameters_ok": true,
+      "camera_json": {
+        "pan_degrees": -3.1657850837907695e-15,
+        "tilt_degrees": -77.8415357844265,
+        "roll_degrees": -1.6955857715346204e-17,
+        "position_meters": [
+          -5.39074710262663e-15,
+          -54.90126111816488,
+          12.183464214497008
+        ],
+        "x_focal_length": 1400.0000000000243,
+        "y_focal_length": 1400.0000000001987,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "valid": true,
+      "invalid_reason": null
+    },
+    {
+      "case": "cam2_pan_left",
+      "true": {
+        "fx": 1500,
+        "fy": 1500,
+        "pan_deg": 17.188733853924695,
+        "tilt_deg": 74.48451336700703,
+        "roll_deg": 1.1459155902616465,
+        "position": [
+          -20.0,
+          -52.0,
+          11.0
+        ]
+      },
+      "homography_det": -230.38531965013453,
+      "homography_invertible": true,
+      "homography_inv_ok": true,
+      "from_homography_success": true,
+      "recovered": {
+        "fx": 1500.0000000000043,
+        "fy": 1500.0000000000791,
+        "pan_deg": -1.1459155902618599,
+        "tilt_deg": -74.48451336700774,
+        "roll_deg": -17.18873385392389,
+        "position": [
+          -19.99999999999946,
+          -51.99999999999975,
+          10.999999999999572
+        ]
+      },
+      "reproj_pre_refine_px": 9.230599155251221,
+      "refined": true,
+      "reprojection_error_px": {
+        "mean": 16.763578077064956,
+        "max": 86.4267898355026,
+        "n_points": 39,
+        "n_gt_in_image_bounds": 0
+      },
+      "all_finite": true,
+      "focal_recovery_rel_err": 2.8800665556142727e-15,
+      "to_json_parameters_ok": true,
+      "camera_json": {
+        "pan_degrees": -1.1446544411490218,
+        "tilt_degrees": -75.00062793499119,
+        "roll_degrees": -17.203605749850414,
+        "position_meters": [
+          -20.00804768881986,
+          -51.9043213239526,
+          11.17047317401841
+        ],
+        "x_focal_length": 1500.0000000000043,
+        "y_focal_length": 1500.0000000000791,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "valid": true,
+      "invalid_reason": null
+    },
+    {
+      "case": "cam3_pan_right",
+      "true": {
+        "fx": 1500,
+        "fy": 1500,
+        "pan_deg": -17.188733853924695,
+        "tilt_deg": 74.48451336700703,
+        "roll_deg": -1.1459155902616465,
+        "position": [
+          20.0,
+          -52.0,
+          11.0
+        ]
+      },
+      "homography_det": -230.38531965013473,
+      "homography_invertible": true,
+      "homography_inv_ok": true,
+      "from_homography_success": true,
+      "recovered": {
+        "fx": 1500.000000000005,
+        "fy": 1500.0000000000398,
+        "pan_deg": 1.1459155902616502,
+        "tilt_deg": -74.4845133670074,
+        "roll_deg": 17.188733853924315,
+        "position": [
+          19.999999999999645,
+          -51.99999999999995,
+          10.999999999999789
+        ]
+      },
+      "reproj_pre_refine_px": 9.230599155244875,
+      "refined": true,
+      "reprojection_error_px": {
+        "mean": 16.76357807707844,
+        "max": 86.426789835462,
+        "n_points": 39,
+        "n_gt_in_image_bounds": 0
+      },
+      "all_finite": true,
+      "focal_recovery_rel_err": 3.334813906500737e-15,
+      "to_json_parameters_ok": true,
+      "camera_json": {
+        "pan_degrees": 1.144654441149034,
+        "tilt_degrees": -75.00062793499082,
+        "roll_degrees": 17.203605749850837,
+        "position_meters": [
+          20.008047688820177,
+          -51.90432132395271,
+          11.170473174018623
+        ],
+        "x_focal_length": 1500.000000000005,
+        "y_focal_length": 1500.0000000000398,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "valid": true,
+      "invalid_reason": null
+    },
+    {
+      "case": "cam4_high",
+      "true": {
+        "fx": 1300,
+        "fy": 1300,
+        "pan_deg": 0.0,
+        "tilt_deg": 68.75493541569878,
+        "roll_deg": 0.0,
+        "position": [
+          0.0,
+          -65.0,
+          20.0
+        ]
+      },
+      "homography_det": -222.77701728057534,
+      "homography_invertible": true,
+      "homography_inv_ok": true,
+      "from_homography_success": true,
+      "recovered": {
+        "fx": 1300.0000000000225,
+        "fy": 1300.0000000000946,
+        "pan_deg": -0.0,
+        "tilt_deg": -68.7549354157002,
+        "roll_deg": -0.0,
+        "position": [
+          0.0,
+          -64.99999999999928,
+          19.99999999999902
+        ]
+      },
+      "reproj_pre_refine_px": 7.923016779798461,
+      "refined": true,
+      "reprojection_error_px": {
+        "mean": 14.40718327806466,
+        "max": 73.50240013292279,
+        "n_points": 39,
+        "n_gt_in_image_bounds": 0
+      },
+      "all_finite": true,
+      "focal_recovery_rel_err": 1.7315379899138442e-14,
+      "to_json_parameters_ok": true,
+      "camera_json": {
+        "pan_degrees": 3.0781823242584662e-15,
+        "tilt_degrees": -69.27408660619923,
+        "roll_degrees": 1.3433829475426336e-15,
+        "position_meters": [
+          3.612129137732948e-15,
+          -64.83642200276283,
+          20.29714963627142
+        ],
+        "x_focal_length": 1300.0000000000225,
+        "y_focal_length": 1300.0000000000946,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "valid": true,
+      "invalid_reason": null
+    },
+    {
+      "case": "cam5_tight",
+      "true": {
+        "fx": 1700,
+        "fy": 1700,
+        "pan_deg": 5.729577951308233,
+        "tilt_deg": 80.21409131831524,
+        "roll_deg": 0.5729577951308232,
+        "position": [
+          5.0,
+          -48.0,
+          9.0
+        ]
+      },
+      "homography_det": -272.1539712994907,
+      "homography_invertible": true,
+      "homography_inv_ok": true,
+      "from_homography_success": true,
+      "recovered": {
+        "fx": 1700.0000000000034,
+        "fy": 1700.0000000000457,
+        "pan_deg": -0.572957795130824,
+        "tilt_deg": -80.21409131831548,
+        "roll_deg": -5.72957795130809,
+        "position": [
+          5.000000000000082,
+          -47.999999999999936,
+          8.999999999999766
+        ]
+      },
+      "reproj_pre_refine_px": 10.094651272702983,
+      "refined": true,
+      "reprojection_error_px": {
+        "mean": 18.21254425614793,
+        "max": 96.4534919939773,
+        "n_points": 39,
+        "n_gt_in_image_bounds": 0
+      },
+      "all_finite": true,
+      "focal_recovery_rel_err": 2.0062383127344005e-15,
+      "to_json_parameters_ok": true,
+      "camera_json": {
+        "pan_degrees": -0.5722449445480041,
+        "tilt_degrees": -80.71303609265581,
+        "roll_degrees": -5.735541504270551,
+        "position_meters": [
+          5.000236073624373,
+          -47.92300870265364,
+          9.126973382694032
+        ],
+        "x_focal_length": 1700.0000000000034,
+        "y_focal_length": 1700.0000000000457,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "valid": true,
+      "invalid_reason": null
+    }
+  ],
+  "num_valid_cases": 5,
+  "num_cases": 5
+}

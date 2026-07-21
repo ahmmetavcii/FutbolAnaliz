@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-07-18T17:00:38.674666+00:00",
+  "checkpoints": [
+    {
+      "repo": "sn-banner",
+      "file": "/home/ahmet/models/soccernet/sn-banner/best_mIoU_iter_10935.pth",
+      "sha256": "0133213b6b72273a03bce6961911386a61dbf04ad6de8cd747044f11f8b6c8e8",
+      "source": "https://huggingface.co/datasets/SoccerNet/BannerReplacement",
+      "bytes": 873208160,
+      "license": "CHECKPOINT_LICENSE_UNKNOWN (SoccerNet HF dataset)",
+      "loaded": true
+    },
+    {
+      "repo": "PTS-baseline",
+      "file": "/home/ahmet/models/soccernet/PTS-baseline/checkpoint_088.pt",
+      "sha256": "2d8376e96198c07f3e73c1712ffb1a4b2524feb4baa609479935c86d6eeb4ba3",
+      "source": "https://github.com/jhong93/e2e-spot-models (README-linked)",
+      "bytes": 18068301,
+      "license": "CHECKPOINT_LICENSE_UNKNOWN (upstream e2e-spot-models)",
+      "loaded": true
+    },
+    {
+      "repo": "sn-teamspotting",
+      "file": "/home/ahmet/models/soccernet/sn-teamspotting/SoccerNetBall_baseline/checkpoint_best.pt",
+      "sha256": "ed7c558d575eba1918be8f67813571723962eeff807dba68a12a2d794dd1c72a",
+      "source": "https://drive.google.com/drive/folders/16IqSkctIGp76ZYKKvJvMB_ggHcQsessM (README-linked)",
+      "bytes": 49581474,
+      "license": "CHECKPOINT_LICENSE_UNKNOWN (SoccerNet Drive)",
+      "loaded": true
+    },
+    {
+      "repo": "sn-depth",
+      "file": "/home/ahmet/models/soccernet/sn-depth/ZoeDepthN_football.pt",
+      "sha256": "063d61f94059ee86f0090e7356717386dfa76fa6b8d6db28a2be774946427a75",
+      "source": "https://drive.google.com/file/d/1GLt5lk6To8muqf9eoV_dspchqSMKobV1 (README-linked)",
+      "bytes": 4184840403,
+      "license": "CHECKPOINT_LICENSE_UNKNOWN (SoccerNet Drive)",
+      "loaded": true
+    }
+  ]
+}

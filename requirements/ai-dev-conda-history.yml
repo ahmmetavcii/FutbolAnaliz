@@ -1,0 +1,10 @@
+name: ai-dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - setuptools=81.0.0
+  - wheel
+  - pip=26.1.2
+prefix: /home/ahmet/miniconda3/envs/ai-dev

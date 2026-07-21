@@ -1,0 +1,22 @@
+{
+  "json_files": 4752,
+  "segments": 3566675,
+  "invalid_files": 0,
+  "invalid_segments": 0,
+  "versions": {
+    "whisper_v1": 1100,
+    "whisper_v1_en": 734,
+    "whisper_v2": 1100,
+    "whisper_v2_en": 718,
+    "whisper_v3": 1100
+  },
+  "empty_files": 155,
+  "negative_timestamp": 0,
+  "end_before_start": 0,
+  "nonfinite": 0,
+  "empty_text": 530,
+  "out_of_order": 0,
+  "non_numeric_segment_ids": 480,
+  "errors": [],
+  "technical_status": "PASS"
+}

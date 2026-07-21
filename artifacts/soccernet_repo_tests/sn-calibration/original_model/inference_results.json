@@ -1,0 +1,393 @@
+{
+  "implementation_source": "ORIGINAL_MODEL",
+  "checkpoint": "/home/ahmet/models/sn-calibration/soccer_pitch_segmentation.pth",
+  "checkpoint_sha256": "e51b3f076f9e7791cfe5d8d97b496abb4f6a9d544308a25fd85af856472eaa75",
+  "frames": [
+    {
+      "frame_id": 100,
+      "input": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0100.jpg",
+      "runtime_s": 2.6314712269995653,
+      "peak_vram_mb": 1233.109504,
+      "semantic_class_count": 7,
+      "semantic_classes": [
+        "Big rect. right main",
+        "Big rect. right top",
+        "Circle central",
+        "Circle right",
+        "Middle line",
+        "Side line bottom",
+        "Side line top"
+      ],
+      "line_match_count": 5,
+      "valid": true,
+      "homography": [
+        [
+          16.2633240337144,
+          -4.73630328657286,
+          407.88296178958495
+        ],
+        [
+          -0.16493576924432163,
+          1.097318422080515,
+          233.33863998894142
+        ],
+        [
+          0.0004649437333653122,
+          -0.012260219023447308,
+          1.0
+        ]
+      ],
+      "camera": {
+        "pan_degrees": 2.129427982557231,
+        "tilt_degrees": 73.6727263727163,
+        "roll_degrees": 2.959497435464504,
+        "position_meters": [
+          1.0776445333551097,
+          84.2310211003366,
+          -22.74901815157964
+        ],
+        "x_focal_length": 1266.0366097381589,
+        "y_focal_length": 1266.0366097380058,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "reprojection_error_px": 22.648027974349276,
+      "homography_determinant": 63.69356066655349,
+      "homography_invertible": true,
+      "point_match_count": 6,
+      "invalid_reason": null
+    },
+    {
+      "frame_id": 200,
+      "input": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0200.jpg",
+      "runtime_s": 0.1839614350028569,
+      "peak_vram_mb": 1233.109504,
+      "semantic_class_count": 11,
+      "semantic_classes": [
+        "Big rect. left main",
+        "Big rect. left top",
+        "Circle central",
+        "Circle left",
+        "Goal left post right",
+        "Middle line",
+        "Side line bottom",
+        "Side line left",
+        "Side line top",
+        "Small rect. left main",
+        "Small rect. left top"
+      ],
+      "line_match_count": 8,
+      "valid": true,
+      "homography": [
+        [
+          13.10032620471226,
+          -8.57400201879202,
+          611.3397034079676
+        ],
+        [
+          0.19980005746921708,
+          -0.10489470242633214,
+          226.50116248000415
+        ],
+        [
+          -0.0002291104978020087,
+          -0.014443275716510157,
+          1.0
+        ]
+      ],
+      "camera": {
+        "pan_degrees": -2.7916854548909846,
+        "tilt_degrees": 73.41065618849815,
+        "roll_degrees": -1.711941135913054,
+        "position_meters": [
+          -5.1889333590576525,
+          69.23478559961181,
+          -17.459065711683586
+        ],
+        "x_focal_length": 860.0868654306689,
+        "y_focal_length": 860.0868654306895,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "reprojection_error_px": 20.087575033990394,
+      "homography_determinant": 41.86164527207097,
+      "homography_invertible": true,
+      "point_match_count": 13,
+      "invalid_reason": null
+    },
+    {
+      "frame_id": 300,
+      "input": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0300.jpg",
+      "runtime_s": 0.17888527600007365,
+      "peak_vram_mb": 1233.109504,
+      "semantic_class_count": 10,
+      "semantic_classes": [
+        "Big rect. left main",
+        "Big rect. left top",
+        "Circle central",
+        "Circle left",
+        "Goal left post right",
+        "Middle line",
+        "Side line bottom",
+        "Side line left",
+        "Side line top",
+        "Small rect. left main"
+      ],
+      "line_match_count": 7,
+      "valid": true,
+      "homography": [
+        [
+          12.341100339744308,
+          -7.1475670146372705,
+          610.3243717604272
+        ],
+        [
+          0.13404000766034743,
+          0.5140103292824546,
+          239.03017154333332
+        ],
+        [
+          -0.0009910692082564262,
+          -0.01202688842671678,
+          1.0
+        ]
+      ],
+      "camera": {
+        "pan_degrees": -5.357989413107299,
+        "tilt_degrees": 75.32400231104468,
+        "roll_degrees": -2.2480626747330112,
+        "position_meters": [
+          -2.461562528732938,
+          79.37541817964402,
+          -18.74969251499765
+        ],
+        "x_focal_length": 1016.6200415246018,
+        "y_focal_length": 1016.6200415246403,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "reprojection_error_px": 25.14925606760791,
+      "homography_determinant": 43.79981809806755,
+      "homography_invertible": true,
+      "point_match_count": 12,
+      "invalid_reason": null
+    },
+    {
+      "frame_id": 400,
+      "input": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0400.jpg",
+      "runtime_s": 0.16695053000148619,
+      "peak_vram_mb": 1233.109504,
+      "semantic_class_count": 7,
+      "semantic_classes": [
+        "Big rect. right main",
+        "Big rect. right top",
+        "Circle central",
+        "Circle right",
+        "Middle line",
+        "Side line bottom",
+        "Side line top"
+      ],
+      "line_match_count": 5,
+      "valid": true,
+      "homography": [
+        [
+          17.10775794056815,
+          -4.345771482255042,
+          398.45280894422046
+        ],
+        [
+          -0.09662777975881395,
+          1.279114480664202,
+          239.69160410648968
+        ],
+        [
+          0.0008151982764549273,
+          -0.011626537568736646,
+          1.0
+        ]
+      ],
+      "camera": {
+        "pan_degrees": 3.0934125920050586,
+        "tilt_degrees": 73.61839932562465,
+        "roll_degrees": 1.9139252195851975,
+        "position_meters": [
+          0.14336118280757137,
+          89.27486862687465,
+          -24.400756582055028
+        ],
+        "x_focal_length": 1387.837667308243,
+        "y_focal_length": 1387.837667308312,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "reprojection_error_px": 19.15098476802078,
+      "homography_determinant": 68.32148898690679,
+      "homography_invertible": true,
+      "point_match_count": 6,
+      "invalid_reason": null
+    },
+    {
+      "frame_id": 500,
+      "input": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0500.jpg",
+      "runtime_s": 0.16821211999922525,
+      "peak_vram_mb": 1233.109504,
+      "semantic_class_count": 15,
+      "semantic_classes": [
+        "Big rect. right bottom",
+        "Big rect. right main",
+        "Big rect. right top",
+        "Circle central",
+        "Circle right",
+        "Goal right crossbar",
+        "Goal right post left",
+        "Goal right post right",
+        "Middle line",
+        "Side line bottom",
+        "Side line right",
+        "Side line top",
+        "Small rect. right bottom",
+        "Small rect. right main",
+        "Small rect. right top"
+      ],
+      "line_match_count": 10,
+      "valid": true,
+      "homography": [
+        [
+          16.924983088123085,
+          -1.9313849562511654,
+          182.15002979236982
+        ],
+        [
+          0.06879031148071525,
+          0.8452911677144914,
+          235.0271559616013
+        ],
+        [
+          0.0036496749642988798,
+          -0.01279854900686074,
+          1.0
+        ]
+      ],
+      "camera": {
+        "pan_degrees": 14.84206732440274,
+        "tilt_degrees": 74.4781339550144,
+        "roll_degrees": -0.2793231472584035,
+        "position_meters": [
+          0.016922832026377677,
+          72.41054151270725,
+          -17.53145428664092
+        ],
+        "x_focal_length": 1136.1837474454917,
+        "y_focal_length": 1136.183747445578,
+        "principal_point": [
+          480.0,
+          270.0
+        ],
+        "radial_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential_distortion": [
+          0.0,
+          0.0
+        ],
+        "thin_prism_distortion": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "reprojection_error_px": 14.170420311680083,
+      "homography_determinant": 62.97086273774828,
+      "homography_invertible": true,
+      "point_match_count": 16,
+      "invalid_reason": null
+    }
+  ],
+  "valid_frames": 5
+}

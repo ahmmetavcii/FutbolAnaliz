@@ -1,0 +1,73 @@
+{
+  "source_example": "tracklab/SNGS-116.json",
+  "top_level_keys": [
+    "predictions"
+  ],
+  "predictions": {
+    "type": "list",
+    "len": 10757,
+    "item_keys": [
+      "bbox_pitch",
+      "bbox_image",
+      "category_id",
+      "image_id",
+      "video_id",
+      "track_id",
+      "supercategory",
+      "attributes",
+      "id"
+    ],
+    "sample_item": {
+      "bbox_pitch": "dict",
+      "bbox_image": "dict",
+      "category_id": 1.0,
+      "image_id": "3116000001",
+      "video_id": "116",
+      "track_id": 1,
+      "supercategory": "object",
+      "attributes": "dict",
+      "id": "0"
+    }
+  },
+  "sample_annotation": {
+    "bbox_pitch": {
+      "x_bottom_left": 29.97679088172973,
+      "y_bottom_left": 1.8442575725543207,
+      "x_bottom_right": 30.485419123908578,
+      "y_bottom_right": 2.217354124446501,
+      "x_bottom_middle": 30.231045344697606,
+      "y_bottom_middle": 2.0307620871888035
+    },
+    "bbox_image": {
+      "x": 477.26837158203125,
+      "y": 565.1831665039062,
+      "w": 51.35552978515625,
+      "h": 140.48565673828125
+    },
+    "category_id": 1.0,
+    "image_id": "3116000001",
+    "video_id": "116",
+    "track_id": 1,
+    "supercategory": "object",
+    "attributes": {
+      "role": "player",
+      "jersey": "33",
+      "team": "left"
+    },
+    "id": "0"
+  },
+  "annotation_key_union_first500": [
+    "attributes",
+    "attributes.jersey",
+    "attributes.role",
+    "attributes.team",
+    "bbox_image",
+    "bbox_pitch",
+    "category_id",
+    "id",
+    "image_id",
+    "supercategory",
+    "track_id",
+    "video_id"
+  ]
+}

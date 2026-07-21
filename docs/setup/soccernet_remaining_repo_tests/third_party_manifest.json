@@ -1,0 +1,143 @@
+{
+  "generated_at": "2026-07-18T15:47:42.171691+00:00",
+  "components": [
+    {
+      "repository": "sn-banner",
+      "commit": "f6d50b24a33d",
+      "license": "GPL-3.0",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": true,
+        "path": "/home/ahmet/models/soccernet/sn-banner/best_mIoU_iter_10935.pth",
+        "sha256": "0133213b6b72273a03bce6961911386a61dbf04ad6de8cd747044f11f8b6c8e8",
+        "size_bytes": 873208160,
+        "source": "https://huggingface.co/datasets/SoccerNet/BannerReplacement",
+        "loads": false,
+        "load_blocker": "mmengine/mmseg not installed"
+      }
+    },
+    {
+      "repository": "sn-nvs",
+      "commit": "1655ab19b3bd",
+      "license": "LICENSE_NOT_FOUND (root); submodules Gaussian/Triangle-Splatting research non-commercial",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    },
+    {
+      "repository": "sn-teamspotting",
+      "commit": "091fed2fc35c",
+      "license": "GPL-3.0",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    },
+    {
+      "repository": "sn-depth",
+      "commit": "9f6636fafb11",
+      "license": "LICENSE_NOT_FOUND (root); baseline ZoeDepth MIT",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false,
+        "note": "ZoeDepth weights exist upstream (isl-org) via torch.hub"
+      }
+    },
+    {
+      "repository": "sn-mvfoul",
+      "commit": "502fb44a76c2",
+      "license": "GPL-3.0",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    },
+    {
+      "repository": "sn-caption",
+      "commit": "c05973d4f008",
+      "license": "LICENSE_NOT_FOUND (root); benchmark TemporallyAwarePooling license present",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    },
+    {
+      "repository": "sn-spotting",
+      "commit": "9842826f94e1",
+      "license": "MIT",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false,
+        "note": "Only Features/pca_512_TF2.pkl present (feature PCA, not a model)"
+      }
+    },
+    {
+      "repository": "sn-reid",
+      "commit": "621e2b0f2d2a",
+      "license": "MIT",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    },
+    {
+      "repository": "sn-tracking",
+      "commit": "b0bbba35e07f",
+      "license": "LICENSE_NOT_FOUND (root); benchmarks DeepSORT/ByteTrack MIT",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    },
+    {
+      "repository": "ActiveSpotting",
+      "commit": "33a81cb83497",
+      "license": "MIT",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    },
+    {
+      "repository": "PTS-baseline",
+      "commit": "af2ea8234e0c",
+      "license": "BSD-3-Clause",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    },
+    {
+      "repository": "sn-grounding",
+      "commit": "910bf859ac6d",
+      "license": "MIT",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    },
+    {
+      "repository": "SoccerNet-v3",
+      "commit": "7d483a85ad62",
+      "license": "MIT",
+      "source_copied_into_football_analytics": false,
+      "usage": "audited/tested externally; not vendored",
+      "checkpoint": {
+        "available_official": false
+      }
+    }
+  ]
+}

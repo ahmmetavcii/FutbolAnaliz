@@ -1,0 +1,56 @@
+{
+  "video": "/mnt/c/football_data/videos/test_clips/football.mp4",
+  "total_frames": 750,
+  "frames": [
+    {
+      "frame_index": 100,
+      "path": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0100.jpg",
+      "written": true,
+      "width": 1920,
+      "height": 1080,
+      "file_size": 470815,
+      "reopened_ok": true,
+      "zero_byte": false
+    },
+    {
+      "frame_index": 200,
+      "path": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0200.jpg",
+      "written": true,
+      "width": 1920,
+      "height": 1080,
+      "file_size": 606049,
+      "reopened_ok": true,
+      "zero_byte": false
+    },
+    {
+      "frame_index": 300,
+      "path": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0300.jpg",
+      "written": true,
+      "width": 1920,
+      "height": 1080,
+      "file_size": 600265,
+      "reopened_ok": true,
+      "zero_byte": false
+    },
+    {
+      "frame_index": 400,
+      "path": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0400.jpg",
+      "written": true,
+      "width": 1920,
+      "height": 1080,
+      "file_size": 503743,
+      "reopened_ok": true,
+      "zero_byte": false
+    },
+    {
+      "frame_index": 500,
+      "path": "/home/ahmet/workspace/staging/sn_calibration_test/frame_0500.jpg",
+      "written": true,
+      "width": 1920,
+      "height": 1080,
+      "file_size": 475514,
+      "reopened_ok": true,
+      "zero_byte": false
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "dataset_root": "/mnt/c/football_data/datasets/SoccerNet/jersey-2023",
+  "splits": {
+    "train": {
+      "split": "train",
+      "gt_path": "/mnt/c/football_data/datasets/SoccerNet/jersey-2023/train/train_gt.json",
+      "img_root": "/mnt/c/football_data/datasets/SoccerNet/jersey-2023/train/images",
+      "gt_exists": true,
+      "images_dir_exists": true,
+      "gt_entries": 1427,
+      "gt_key_types": {
+        "str": 1427
+      },
+      "gt_value_types": {
+        "int": 1427
+      },
+      "gt_keys_all_str": true,
+      "gt_values_all_int": true,
+      "gt_duplicate_keys": "N/A (json dict enforces unique keys)",
+      "num_minus1": 403,
+      "num_known": 1024,
+      "known_number_min": 1,
+      "known_number_max": 93,
+      "invalid_numbers_out_of_0_99": [],
+      "image_folders": 1427,
+      "gt_without_folder": [],
+      "folder_without_gt": [],
+      "n_gt_without_folder": 0,
+      "n_folder_without_gt": 0,
+      "gt_folder_match": true,
+      "empty_tracklets": [],
+      "n_empty_tracklets": 0,
+      "frame_count_stats": {
+        "min": 1,
+        "max": 750,
+        "mean": 513.67,
+        "median": 544,
+        "total_images": 733001,
+        "p10": 208,
+        "p90": 750
+      },
+      "tracklets_ge_20_frames": 1419,
+      "tracklets_lt_20_frames": 8,
+      "known_and_ge20": 1024
+    },
+    "test": {
+      "split": "test",
+      "gt_path": "/mnt/c/football_data/datasets/SoccerNet/jersey-2023/test/test_gt.json",
+      "img_root": "/mnt/c/football_data/datasets/SoccerNet/jersey-2023/test/images",
+      "gt_exists": true,
+      "images_dir_exists": true,
+      "gt_entries": 1211,
+      "gt_key_types": {
+        "str": 1211
+      },
+      "gt_value_types": {
+        "int": 1211
+      },
+      "gt_keys_all_str": true,
+      "gt_values_all_int": true,
+      "gt_duplicate_keys": "N/A (json dict enforces unique keys)",
+      "num_minus1": 355,
+      "num_known": 856,
+      "known_number_min": 1,
+      "known_number_max": 99,
+      "invalid_numbers_out_of_0_99": [],
+      "image_folders": 1211,
+      "gt_without_folder": [],
+      "folder_without_gt": [],
+      "n_gt_without_folder": 0,
+      "n_folder_without_gt": 0,
+      "gt_folder_match": true,
+      "empty_tracklets": [],
+      "n_empty_tracklets": 0,
+      "frame_count_stats": {
+        "min": 1,
+        "max": 750,
+        "mean": 466.18,
+        "median": 490,
+        "total_images": 564547,
+        "p10": 150,
+        "p90": 750
+      },
+      "tracklets_ge_20_frames": 1197,
+      "tracklets_lt_20_frames": 14,
+      "known_and_ge20": 855
+    }
+  }
+}

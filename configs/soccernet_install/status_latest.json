@@ -1,0 +1,401 @@
+{
+  "generated_at": "2026-07-18T01:05:48.214187+03:00",
+  "session": "20260717_234122",
+  "system": {
+    "user": "ahmet",
+    "home": "/home/ahmet",
+    "ubuntu": "Ubuntu 22.04.5 LTS",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "vram_mib": 8188,
+    "driver": "610.74",
+    "cuda_driver_capability": "13.3",
+    "wsl_ram_observed_gib": 7.6,
+    "note": "Host reports 16 GB RAM but WSL currently exposes ~7.6 GiB; installs run sequentially"
+  },
+  "ai_dev": {
+    "python": "3.10.20",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "torchaudio": "2.11.0+cu128",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "opencv": "5.0.0.93",
+    "ultralytics": "8.4.91",
+    "SoccerNet": "0.1.62",
+    "cuda_available": true,
+    "pip_check": "clean",
+    "check_env": "PASS",
+    "jupyter_kernel": "Python (ai-dev)"
+  },
+  "smoke": {
+    "run_dir": "/home/ahmet/workspace/runs/setup_smoke_20260718_002437",
+    "status": "PASS",
+    "peak_vram_bytes": 50818048,
+    "processing_fps": 25.338499292514783,
+    "tracked_detections": 233
+  },
+  "environments": {
+    "ai-dev": {
+      "path": "/home/ahmet/miniconda3/envs/ai-dev",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 8686244058,
+      "disk_human": "8.1 GiB"
+    },
+    "sn-trackeval": {
+      "path": "/home/ahmet/miniconda3/envs/sn-trackeval",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 695311898,
+      "disk_human": "663.1 MiB"
+    },
+    "sn-gamestate-python": {
+      "path": "/home/ahmet/miniconda3/envs/sn-gamestate-python",
+      "exists": true,
+      "python": "Python 3.9.23",
+      "disk_bytes": 206841594,
+      "disk_human": "197.3 MiB"
+    },
+    "sn-gamestate": {
+      "path": "/home/ahmet/.venvs/soccernet/sn-gamestate",
+      "exists": true,
+      "python": "Python 3.9.23",
+      "disk_bytes": 4872958395,
+      "disk_human": "4.5 GiB"
+    },
+    "sn-calibration": {
+      "path": "/home/ahmet/miniconda3/envs/sn-calibration",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 5011274396,
+      "disk_human": "4.7 GiB"
+    },
+    "sn-teamspotting": {
+      "path": "/home/ahmet/miniconda3/envs/sn-teamspotting",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 1691076152,
+      "disk_human": "1.6 GiB"
+    },
+    "sn-mvfoul": {
+      "path": "/home/ahmet/miniconda3/envs/sn-mvfoul",
+      "exists": true,
+      "python": "Python 3.9.23",
+      "disk_bytes": 1954678317,
+      "disk_human": "1.8 GiB"
+    },
+    "sn-pts-baseline": {
+      "path": "/home/ahmet/miniconda3/envs/sn-pts-baseline",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 1469005828,
+      "disk_human": "1.4 GiB"
+    },
+    "sn-reid": {
+      "path": "/home/ahmet/miniconda3/envs/sn-reid",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 1661347821,
+      "disk_human": "1.5 GiB"
+    },
+    "sn-echoes": {
+      "path": "/home/ahmet/miniconda3/envs/sn-echoes",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 144039565,
+      "disk_human": "137.4 MiB"
+    },
+    "sn-active-spotting": {
+      "path": "/home/ahmet/miniconda3/envs/sn-active-spotting",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 1339256588,
+      "disk_human": "1.2 GiB"
+    },
+    "sn-banner-mmseg": {
+      "path": "/home/ahmet/miniconda3/envs/sn-banner-mmseg",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 5309165185,
+      "disk_human": "4.9 GiB"
+    },
+    "sn-banner-replacement": {
+      "path": "/home/ahmet/miniconda3/envs/sn-banner-replacement",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 1769400545,
+      "disk_human": "1.6 GiB"
+    },
+    "sn-nvs": {
+      "path": "/home/ahmet/miniconda3/envs/sn-nvs",
+      "exists": true,
+      "python": "Python 3.10.20",
+      "disk_bytes": 144057458,
+      "disk_human": "137.4 MiB"
+    }
+  },
+  "repositories": {
+    "sn-trackeval": {
+      "type": "EVALUATION_TOOL",
+      "env": "sn-trackeval",
+      "status": "EVALUATION_READY",
+      "tests": [
+        "import trackeval",
+        "run_soccernet_gs.py --help",
+        "pytest tests/test_metrics.py 9 passed"
+      ],
+      "blocker": null
+    },
+    "sn-gamestate": {
+      "type": "FRAMEWORK",
+      "env": "sn-gamestate venv",
+      "status": "READY_FOR_DATASET_VIDEO_SMOKE_TEST",
+      "tests": [
+        "import tracklab",
+        "import sn_gamestate",
+        "import mmcv==2.0.1",
+        "tracklab --help",
+        "Hydra config parse -cn soccernet"
+      ],
+      "blocker": "Zenodo/model weights and SoccerNetGS dataset not downloaded by policy"
+    },
+    "sn-echoes": {
+      "type": "DATASET_RELEASE",
+      "env": "sn-echoes",
+      "status": "DATASET_DEVKIT_READY",
+      "tests": [
+        "stats.py syntax patch applied",
+        "count_annotations smoke over JSON tree"
+      ],
+      "blocker": null,
+      "patch": "patches/sn-echoes-stats-syntax.patch"
+    },
+    "sn-teamspotting": {
+      "type": "BASELINE",
+      "env": "sn-teamspotting",
+      "status": "READY_FOR_VIDEO_INPUT",
+      "tests": [
+        "imports model/util/dataset",
+        "train_tdeed_bas.py --help"
+      ],
+      "blocker": "Google Drive checkpoint + HF/NDA videos not downloaded"
+    },
+    "sn-mvfoul": {
+      "type": "DEVKIT",
+      "env": "sn-mvfoul",
+      "status": "READY_FOR_VIDEO_INPUT",
+      "tests": [
+        "VARS model imports",
+        "main.py --help"
+      ],
+      "blocker": "NDA passworded dataset required; mvtorch PyPI package unavailable (not required for VARS model core)"
+    },
+    "sn-calibration": {
+      "type": "DEVKIT",
+      "env": "sn-calibration",
+      "status": "READY_FOR_NONVIDEO_USE",
+      "tests": [
+        "SoccerPitch import",
+        "evaluate_camera.py --help"
+      ],
+      "blocker": "Google Drive network weights not downloaded"
+    },
+    "PTS-baseline": {
+      "type": "BASELINE",
+      "env": "sn-pts-baseline",
+      "status": "PARTIALLY_READY",
+      "tests": [
+        "NumPy ABI resolved with numpy==1.23.5 + torch==1.11.0+cpu",
+        "test_e2e.py --help"
+      ],
+      "blocker": "No trained model/frame directory available for inference smoke"
+    },
+    "ActiveSpotting": {
+      "type": "BASELINE",
+      "env": "sn-active-spotting",
+      "status": "PARTIALLY_READY",
+      "tests": [
+        "CPU torch 1.11 imports",
+        "main.py --help"
+      ],
+      "blocker": "Legacy CUDA 10.1 wheels not forced; needs SoccerNet feature npy files"
+    },
+    "SoccerNet": {
+      "type": "SDK",
+      "env": "ai-dev",
+      "status": "READY_FOR_NONVIDEO_USE",
+      "tests": [
+        "SoccerNet==0.1.62 import",
+        "Downloader path smoke",
+        "pip check clean"
+      ],
+      "blocker": null
+    },
+    "sn-banner": {
+      "type": "BASELINE",
+      "env": "sn-banner-mmseg + sn-banner-replacement",
+      "status": "PARTIALLY_READY",
+      "tests": [
+        "mmseg imports",
+        "NBJW imports",
+        "inference.py --help",
+        "SV_kp/SV_lines downloaded"
+      ],
+      "blocker": "Mask2Former HF weight + BannerReplacement dataset not downloaded; TTA needs >=24GB VRAM"
+    },
+    "sn-reid": {
+      "type": "DEVKIT",
+      "env": "sn-reid",
+      "status": "READY_FOR_NONVIDEO_USE",
+      "tests": [
+        "torchreid 1.4.0 import",
+        "rank_cy Cython extension loaded"
+      ],
+      "blocker": null
+    },
+    "sn-nvs": {
+      "type": "BASELINE",
+      "env": "sn-nvs (created empty)",
+      "status": "BLOCKED_BUILD",
+      "tests": [
+        "submodules initialized",
+        "CUDAExtension sources confirmed"
+      ],
+      "blocker": "Intentionally deferred: CUDA Toolkit/nvcc not installed to protect stable ai-dev; sn-nvs out of MVP scope (BLOCKED_BUILD retained)"
+    },
+    "sn-tracking": {
+      "type": "DEVKIT",
+      "env": null,
+      "status": "CLONED_NOT_INSTALLED",
+      "tests": [
+        "clone/commit verified",
+        "tools/zip_gt.py compiles"
+      ],
+      "blocker": "ByteTrack/DeepSORT external stacks not installed"
+    },
+    "sn-spotting": {
+      "type": "DEVKIT",
+      "env": null,
+      "status": "CLONED_NOT_INSTALLED",
+      "tests": [
+        "clone/commit verified",
+        "EvaluateSpotting.py compiles"
+      ],
+      "blocker": "Multiple benchmark envs + features/videos not installed"
+    },
+    "sn-grounding": {
+      "type": "DEVKIT",
+      "env": null,
+      "status": "CLONED_NOT_INSTALLED",
+      "tests": [
+        "clone/commit verified",
+        "EvaluateGrounding.py compiles"
+      ],
+      "blocker": "Dataset/features required"
+    },
+    "SoccerNet-v3": {
+      "type": "DEVKIT",
+      "env": "ai-dev",
+      "status": "CLONED_NOT_INSTALLED",
+      "tests": [
+        "dataloader/statistics/visualize modules load"
+      ],
+      "blocker": "SoccerNet-v3 annotations/images not downloaded"
+    },
+    "sn-jersey": {
+      "type": "DOCS",
+      "env": null,
+      "status": "DATASET_DEVKIT_READY",
+      "tests": [
+        "README present; no code in repo"
+      ],
+      "blocker": null
+    },
+    "sn-caption": {
+      "type": "DEVKIT",
+      "env": null,
+      "status": "CLONED_NOT_INSTALLED",
+      "tests": [
+        "EvaluateDenseVideoCaption.py compiles"
+      ],
+      "blocker": "Dense caption data/features not installed"
+    },
+    "sn-depth": {
+      "type": "DEVKIT",
+      "env": null,
+      "status": "CLONED_NOT_INSTALLED",
+      "tests": [
+        "clone/commit verified",
+        "ZoeDepth baseline present"
+      ],
+      "blocker": "ZoeDepth env + synthetic depth dataset not installed"
+    }
+  },
+  "third_party": {
+    "TrackLab": {
+      "status": "CLONED_NOT_INSTALLED",
+      "note": "v1.3.24 used via sn-gamestate pip; clone for reference"
+    },
+    "PnLCalib": {
+      "status": "CLONED_NOT_INSTALLED",
+      "note": "commit pinned"
+    },
+    "No-Bells-Just-Whistles": {
+      "status": "PARTIALLY_READY",
+      "note": "imports in banner-replacement; weights downloaded"
+    }
+  },
+  "models": {
+    "yolo11n": {
+      "model_name": "yolo11n.pt",
+      "repo": "ultralytics",
+      "path": "/home/ahmet/models/yolo11n.pt",
+      "size_bytes": 5613764,
+      "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+      "source": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt",
+      "license": "AGPL-3.0 (Ultralytics)",
+      "download_date": "2026-07-18T01:05:48.214187+03:00",
+      "framework": "ultralytics/yolo",
+      "status": "DOWNLOADED_VERIFIED"
+    },
+    "SV_kp": {
+      "model_name": "SV_kp.pth",
+      "repo": "sn-banner / No-Bells-Just-Whistles",
+      "path": "/home/ahmet/models/sn-banner/SV_kp.pth",
+      "size_bytes": 264964645,
+      "sha256": "7ea78fa76aaf94976a8eca428d6e3c59697a93430cba1a4603e20284b61f5113",
+      "source": "https://github.com/mguti97/No-Bells-Just-Whistles/releases/download/v1.0.0/SV_kp",
+      "license": "upstream No-Bells-Just-Whistles / SoccerNet challenge terms",
+      "download_date": "2026-07-18T01:05:48.214187+03:00",
+      "framework": "pytorch",
+      "status": "DOWNLOADED_VERIFIED"
+    },
+    "SV_lines": {
+      "model_name": "SV_lines.pth",
+      "repo": "sn-banner / No-Bells-Just-Whistles",
+      "path": "/home/ahmet/models/sn-banner/SV_lines.pth",
+      "size_bytes": 264857893,
+      "sha256": "2751242917f8c0f858a396e0cfe4521be39fe07bf049590eb21714526acecac1",
+      "source": "https://github.com/mguti97/No-Bells-Just-Whistles/releases/download/v1.0.0/SV_lines",
+      "license": "upstream No-Bells-Just-Whistles / SoccerNet challenge terms",
+      "download_date": "2026-07-18T01:05:48.214187+03:00",
+      "framework": "pytorch",
+      "status": "DOWNLOADED_VERIFIED"
+    }
+  },
+  "patches": [
+    {
+      "name": "sn-echoes-stats-syntax",
+      "path": "patches/sn-echoes-stats-syntax.patch",
+      "docs": "patches/sn-echoes-stats-syntax.md",
+      "applied": true
+    }
+  ],
+  "manual_actions": [
+    "sn-nvs remains BLOCKED_BUILD by design; CUDA Toolkit not installed to protect ai-dev",
+    "SoccerNet NDA credentials for broadcast/tracking/mvfoul videos",
+    "Google Drive weights for sn-calibration and sn-teamspotting",
+    "Zenodo/gamestate pretrained weights when ready for video smoke",
+    "Optional: increase WSL memory toward 16 GB in .wslconfig"
+  ]
+}

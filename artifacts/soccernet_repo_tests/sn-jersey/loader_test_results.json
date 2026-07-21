@@ -1,0 +1,120 @@
+{
+  "note": "Reference loader (football-analytics side); sn-jersey provides NO loader/model.",
+  "config": {
+    "frames_per_tracklet": 8,
+    "resize": 64,
+    "filter": "known number & >=20 frames"
+  },
+  "loader_runs": [
+    {
+      "split": "train",
+      "batch_size": 1,
+      "num_workers": 0,
+      "dataset_len": 32,
+      "batches_read": 3,
+      "first_batch_shape": [
+        1,
+        8,
+        3,
+        64,
+        64
+      ],
+      "dtype": "torch.float32",
+      "first_labels": [
+        10
+      ],
+      "first_pids": [
+        "0"
+      ],
+      "seconds_for_3_batches": 0.352
+    },
+    {
+      "split": "train",
+      "batch_size": 4,
+      "num_workers": 0,
+      "dataset_len": 32,
+      "batches_read": 3,
+      "first_batch_shape": [
+        4,
+        8,
+        3,
+        64,
+        64
+      ],
+      "dtype": "torch.float32",
+      "first_labels": [
+        10,
+        30,
+        27,
+        10
+      ],
+      "first_pids": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
+      "seconds_for_3_batches": 0.978
+    },
+    {
+      "split": "train",
+      "batch_size": 4,
+      "num_workers": 2,
+      "dataset_len": 32,
+      "batches_read": 3,
+      "first_batch_shape": [
+        4,
+        8,
+        3,
+        64,
+        64
+      ],
+      "dtype": "torch.float32",
+      "first_labels": [
+        10,
+        30,
+        27,
+        10
+      ],
+      "first_pids": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
+      "seconds_for_3_batches": 0.508
+    },
+    {
+      "split": "test",
+      "batch_size": 4,
+      "num_workers": 0,
+      "dataset_len": 32,
+      "batches_read": 3,
+      "first_batch_shape": [
+        4,
+        8,
+        3,
+        64,
+        64
+      ],
+      "dtype": "torch.float32",
+      "first_labels": [
+        4,
+        93,
+        25,
+        11
+      ],
+      "first_pids": [
+        "0",
+        "1",
+        "2",
+        "5"
+      ],
+      "seconds_for_3_batches": 1.034
+    }
+  ],
+  "determinism": {
+    "train_same_item_equal": true
+  },
+  "loader_only": true
+}

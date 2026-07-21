@@ -1,0 +1,43 @@
+{
+  "technical_status": "PASS",
+  "tests_passed": 6,
+  "tests_failed": 0,
+  "components": [
+    {
+      "component": "SoccerNet SDK",
+      "passed": true,
+      "duration_s": 0.0012592200000653975,
+      "detail": "{\"dataset_root\": \"/mnt/c/football_data/datasets/SoccerNet/jersey-2023\", \"downloader_no_network\": true, \"gt_entries\": {\"test\": 1211, \"train\": 1427}, \"image_inventory_count\": 1297548, \"import\": true, \"inventory_evidence\": \"full read-only scan recorded in logs/soccernet_repo_tests/01_soccernet_sdk.log\", \"sample_decode_ok\": 100, \"sample_decode_total\": 100, \"technical_status\": \"PASS\", \"test_exists\": true, \"train_exists\": true, \"zero_byte_count\": 0}"
+    },
+    {
+      "component": "sn-trackeval",
+      "passed": true,
+      "duration_s": 1.5559111960010341,
+      "detail": ".....                                                                    [100%]\n5 passed in 1.11s"
+    },
+    {
+      "component": "sn-echoes",
+      "passed": true,
+      "duration_s": 0.2841854639991652,
+      "detail": "......................                                                   [100%]\n22 passed in 0.12s"
+    },
+    {
+      "component": "sn-calibration",
+      "passed": true,
+      "duration_s": 0.7158027010009391,
+      "detail": ".........                                                                [100%]\n9 passed in 0.50s"
+    },
+    {
+      "component": "sn-jersey",
+      "passed": true,
+      "duration_s": 5.649540882999645,
+      "detail": "...                                                                      [100%]\n3 passed in 4.07s"
+    },
+    {
+      "component": "sn-gamestate",
+      "passed": true,
+      "duration_s": 0.6603104260011605,
+      "detail": ".....                                                                    [100%]\n5 passed in 0.38s"
+    }
+  ]
+}

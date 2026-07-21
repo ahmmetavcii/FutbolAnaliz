@@ -1,0 +1,10 @@
+diff --git a/stats.py b/stats.py
+--- a/stats.py
++++ b/stats.py
+@@ -23,4 +23,4 @@ if __name__ == "__main__":
+         print(f"Number of annotations in {json_file}: {count}")
+         tot_count += count  
+ 
+-    print(f"Total number of annotations across all files: {tot_count}")s
+\ No newline at end of file
++    print(f"Total number of annotations across all files: {tot_count}")

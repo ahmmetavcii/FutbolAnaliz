@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-07-18",
+  "components": [
+    {
+      "name": "SoccerNet SDK",
+      "source": "https://github.com/SoccerNet/SoccerNet",
+      "commit": "74461027ac2095ce2f8d4ee991eccb5dd5f42459",
+      "license": "MIT",
+      "integration": "external package"
+    },
+    {
+      "name": "SoccerNet TrackEval",
+      "source": "https://github.com/SoccerNet/sn-trackeval",
+      "commit": "9c25232f6f2b56c9f203f1eb55784ff1e97df683",
+      "license": "MIT",
+      "integration": "external evaluator process/API"
+    },
+    {
+      "name": "SoccerNet Echoes",
+      "source": "https://github.com/SoccerNet/sn-echoes",
+      "commit": "7105a85b7a8c1c000a31a30d0c29c388105c3de5",
+      "license": "LICENSE_REVIEW_REQUIRED",
+      "integration": "clean-room data reader; no upstream source copied"
+    },
+    {
+      "name": "SoccerNet Calibration",
+      "source": "https://github.com/SoccerNet/sn-calibration",
+      "commit": "ab38f461bec729fead86b6986839de1bb826f16d",
+      "license": "LICENSE_REVIEW_REQUIRED",
+      "integration": "external original model plus clean-room planar adapter"
+    },
+    {
+      "name": "SoccerNet Jersey",
+      "source": "https://github.com/SoccerNet/sn-jersey",
+      "commit": "2f43b48c59eefe0bb5d948888db07f55f51208ad",
+      "license": "LICENSE_REVIEW_REQUIRED",
+      "integration": "clean-room implementation; no upstream code exists/copied"
+    },
+    {
+      "name": "SoccerNet ReID",
+      "source": "https://github.com/SoccerNet/sn-reid",
+      "commit": "621e2b0f2d2a7a3e207b8dd747542b6608bf72db",
+      "license": "MIT",
+      "integration": "external FeatureExtractor (OSNet) producing embeddings for global identity"
+    },
+    {
+      "name": "SoccerNet Game State",
+      "source": "https://github.com/SoccerNet/sn-gamestate",
+      "commit": "1c958345067218297d221e45e1a6405f975f83e0",
+      "license": "GPL-3.0",
+      "integration": "isolated external process plus clean-room JSON exporter"
+    },
+    {
+      "name": "TrackLab",
+      "source": "https://github.com/TrackingLaboratory/tracklab",
+      "commit": "5767e86c32a6d6c68e2fc8ae7311f558fff6c7b2",
+      "license": "MIT",
+      "integration": "isolated sn-gamestate environment"
+    },
+    {
+      "name": "PnLCalib",
+      "source": "https://github.com/mguti97/PnLCalib",
+      "commit": "8c87391d6f4ea40c5e4d65e61529916c7a49ce62",
+      "license": "GPL-2.0",
+      "integration": "external provider; canonical output only"
+    },
+    {
+      "name": "No-Bells-Just-Whistles",
+      "source": "https://github.com/mguti97/No-Bells-Just-Whistles",
+      "commit": "bd993b31c2917096c23bb8aadf148314d17f8345",
+      "license": "GPL-2.0",
+      "integration": "external sn-gamestate calibration module"
+    }
+  ],
+  "assets": [
+    {
+      "name": "soccer_pitch_segmentation.pth",
+      "source": "https://drive.google.com/file/d/1dbN7LdMV03BR1Eda8n7iKNIyYp9r07sM/view",
+      "target": "/home/ahmet/models/sn-calibration/soccer_pitch_segmentation.pth",
+      "size_bytes": 158917677,
+      "sha256": "e51b3f076f9e7791cfe5d8d97b496abb4f6a9d544308a25fd85af856472eaa75",
+      "terms": "Official sn-calibration README asset; upstream license not explicit"
+    },
+    {
+      "name": "prtreid-soccernet-baseline.pth.tar",
+      "source": "https://zenodo.org/records/10653453/files/prtreid-soccernet-baseline.pth.tar?download=1",
+      "target": "/home/ahmet/models/sn-gamestate/reid/prtreid-soccernet-baseline.pth.tar",
+      "sha256": "1304562c4c930a4a54bbf2d44e221eb911fe31408f6875c5058b2d6ed621cf3b",
+      "md5": "9633825232bc89f23a94522c5561650e",
+      "terms": "Official sn-gamestate model URL; Zenodo record terms apply"
+    },
+    {
+      "name": "hrnetv2_w32_imagenet_pretrained.pth",
+      "source": "https://zenodo.org/records/10604211/files/hrnetv2_w32_imagenet_pretrained.pth?download=1",
+      "target": "/home/ahmet/models/sn-gamestate/reid/hrnetv2_w32_imagenet_pretrained.pth",
+      "sha256": "dc9eeb4f307e3f9bd6e7a13e546962bd8c578db1ca9caed6f7fff71770beb7bb",
+      "md5": "58ea12b0420aa3adaa2f74114c9f9721",
+      "terms": "Official sn-gamestate model URL; Zenodo record terms apply"
+    },
+    {
+      "name": "SV_kp",
+      "source": "https://github.com/mguti97/No-Bells-Just-Whistles/releases/download/v1.0.0/SV_kp",
+      "target": "/home/ahmet/models/sn-gamestate/calibration/SV_kp",
+      "size_bytes": 264964645,
+      "sha256": "7ea78fa76aaf94976a8eca428d6e3c59697a93430cba1a4603e20284b61f5113",
+      "terms": "GPL-2.0 upstream model/repository terms"
+    },
+    {
+      "name": "SV_lines",
+      "source": "https://github.com/mguti97/No-Bells-Just-Whistles/releases/download/v1.0.0/SV_lines",
+      "target": "/home/ahmet/models/sn-gamestate/calibration/SV_lines",
+      "size_bytes": 264857893,
+      "sha256": "2751242917f8c0f858a396e0cfe4521be39fe07bf049590eb21714526acecac1",
+      "terms": "GPL-2.0 upstream model/repository terms"
+    },
+    {
+      "name": "yolo11m.pt",
+      "source": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11m.pt",
+      "target": "/home/ahmet/models/sn-gamestate/yolo/yolo11m.pt",
+      "size_bytes": 40639811,
+      "sha256": "d5ffc1a674953a08e11a8d21e022781b1b23a19b730afc309290bd9fb5305b95",
+      "terms": "Ultralytics AGPL-3.0 / enterprise licensing terms"
+    },
+    {
+      "name": "mobilenet_v3_small-047dcff4.pth",
+      "source": "https://download.pytorch.org/models/mobilenet_v3_small-047dcff4.pth",
+      "target": "/home/ahmet/.cache/torch/hub/checkpoints/mobilenet_v3_small-047dcff4.pth",
+      "size_bytes": 10305014,
+      "sha256": "047dcff4addef86ea5bc2eff13c9614dc11f47ab1160d0a71a25e7db994f4e1f",
+      "terms": "Official torchvision ImageNet pretrained weights (BSD-style torchvision license)"
+    },
+    {
+      "name": "osnet_x1_0_market1501.pth",
+      "source": "https://drive.google.com/file/d/1vduhq5DpN2q1g4fYEZfPI17MJeh9qyrA/view?usp=sharing",
+      "target": "/home/ahmet/models/sn-reid/osnet_x1_0_market1501.pth",
+      "size_bytes": 10399605,
+      "sha256": "2809d3227f7d078f6045f7feb874a34d0684f0e0057b264b99adccf7d4519154",
+      "terms": "torchreid MODEL_ZOO Market1501 OSNet weights used via sn-reid FeatureExtractor"
+    },
+    {
+      "name": "jersey_recognition_v1_best.pt",
+      "source": "trained locally from SoccerNet jersey-2023 train split",
+      "target": "/home/ahmet/models/jersey_recognition_v1_best.pt",
+      "size_bytes": 12762531,
+      "sha256": "7060d422cf30b3ae7ebeb8b09a3fa126d72aaece65f03487ff04a4ec14cebfbc",
+      "terms": "Project-trained checkpoint; underlying dataset subject to SoccerNet data terms"
+    }
+  ]
+}

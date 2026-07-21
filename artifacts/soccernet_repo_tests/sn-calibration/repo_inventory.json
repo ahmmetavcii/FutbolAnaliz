@@ -1,0 +1,32 @@
+{
+  "repo": "/home/ahmet/projects/soccernet/sn-calibration",
+  "remote": "https://github.com/SoccerNet/sn-calibration.git",
+  "branch": "detached HEAD",
+  "commit": "ab38f461bec729fead86b6986839de1bb826f16d",
+  "dirty": false,
+  "fsck": "clean",
+  "submodules": "none",
+  "disk_size_with_git": "5.8M",
+  "disk_size_no_git": "2.9M",
+  "tracked_files": 27,
+  "license_status": "LICENSE_NOT_VERIFIED",
+  "task": "SoccerNet Camera Calibration challenge baseline",
+  "pipeline": [
+    "src/detect_extremities.py (DeepLabV3-ResNet50 seg -> line extremities; NEEDS resources/soccer_pitch_segmentation.pth)",
+    "src/baseline_cameras.py (extremities -> homography -> Camera -> refine -> camera params JSON; no checkpoint)"
+  ],
+  "eval_entrypoints": [
+    "src/evaluate_extremities.py",
+    "src/evaluate_camera.py",
+    "src/evalai_camera.py"
+  ],
+  "input": "SoccerNet-V3 calibration dataset folder (per_match_info.json + images); NOT video",
+  "output_contract": "to_json_parameters: pan/tilt/roll deg, position_meters, x/y_focal_length, principal_point, radial/tangential/thin_prism distortion",
+  "resolution_assumptions": "640x360 (segmentation), 960x540 (calibration/draw)",
+  "gpu": "uses cuda if available else cpu",
+  "hardcoded_paths": [
+    "default -s /home/fmg/data/SN23/... ",
+    "default -p /home/fmg/results/... ",
+    "checkpoint '../resources/soccer_pitch_segmentation.pth' (run from src/)"
+  ]
+}

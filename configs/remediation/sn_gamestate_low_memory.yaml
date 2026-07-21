@@ -1,0 +1,30 @@
+# Low-memory override set for the ORIGINAL sn-gamestate TrackLab pipeline.
+# Applied as Hydra CLI overrides on top of the repo's unmodified `soccernet.yaml`.
+# Algorithm/architecture untouched; only memory-related settings changed.
+# Verified 2026-07-18: 20f/640w and 50f/640w runs exit 0,
+# peak RAM 4.5 GB, peak VRAM 4.5 GB (previously exit 137 OOM).
+#
+# Invocation (env: sn-gamestate-env, cwd: /home/ahmet/projects/soccernet/sn-gamestate):
+#   tracklab -cn soccernet <overrides below>
+
+overrides:
+  dataset: youtube                      # ExternalVideo wrapper
+  dataset.video_path: /home/ahmet/workspace/soccernet_blocker_remediation/clips/football_50f_640w.mp4
+  dataset.eval_set: val
+  model_dir: /home/ahmet/models/sn-gamestate
+  eval_tracking: false                  # no official GT locally
+  test_tracking: true
+  num_cores: 1                          # limit dataloader parallelism (RAM)
+  modules.bbox_detector.batch_size: 1   # default 8
+  modules.reid.batch_size: 4            # default 32/64
+  modules.track.batch_size: 4           # default 64
+  modules.jersey_number_detect.batch_size: 1  # default 32 (mmocr)
+  visualization.cfg.save_videos: false  # visualizer disabled (RAM/IO)
+
+notes:
+  - Input clip pre-downscaled to 640px width, 20-50 frames (source video untouched).
+  - Full original pipeline ran: YOLOUltralytics -> PRTReId -> BPBReIDStrongSORT ->
+    NBJW_Calib_Keypoints -> NBJW_Calib -> MMOCR -> MajorityVoteTracklet ->
+    TrackletTeamClustering -> TrackletTeamSideLabeling
+  - Root cause of previous exit 137 was combined RAM pressure from default batch
+    sizes (reid 64, mmocr 32, calib 256) + visualizer on a 16 GB (7.6 GB WSL) system.

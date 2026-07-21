@@ -1,0 +1,33 @@
+pipeline:
+  name: mvp1_tracking
+  schema_version: "1.0.0"
+  stages:
+    - ingest
+    - detection
+    - tracking
+
+model:
+  name: yolo11n
+  path: /home/ahmet/models/yolo11n.pt
+  imgsz: 640
+  batch: 1
+  device: 0
+  half: true
+  conf: 0.25
+  classes: null  # COCO person=0 etc; null keeps all for smoke
+
+detection:
+  save_annotated: true
+
+tracking:
+  primary_tracker: bytetrack
+  trackers:
+    - bytetrack
+    - botsort
+  persist: true
+
+runtime:
+  max_clip_seconds: 20
+  min_clip_seconds: 1
+  omp_num_threads: 2
+  mkl_num_threads: 2

@@ -1,0 +1,30 @@
+full_match:
+  schema_version: 1.0.0
+  profile: low_memory
+  chunk_seconds: 120
+  resume: true
+  fail_fast: true
+
+cameras:
+  expected_count: null
+  processing: sequential
+  max_concurrent: 1
+
+inference:
+  batch_size: 1
+  workers: 0
+  heavy_models: sequential
+  max_concurrent_heavy_models: 1
+  unload_between_stages: true
+
+resources:
+  max_vram_gb: 4
+  min_free_vram_gb: 0.5
+  max_ram_gb: 8
+  min_free_ram_gb: 1
+  cache_max_gb: 0.5
+
+artifacts:
+  checksum: sha256
+  atomic_writes: true
+  retain_chunk_outputs: true

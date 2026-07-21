@@ -1,0 +1,68 @@
+# Goal / shot / assist evidence fusion weights and thresholds.
+schema_version: "1.0.0"
+
+spotting:
+  enabled: true
+  python: /home/ahmet/miniconda3/envs/sn-pts-baseline/bin/python
+  repo_root: /home/ahmet/projects/soccernet/PTS-baseline
+  checkpoint_dir: /home/ahmet/models/soccernet/PTS-baseline
+  device: cuda
+  score_threshold: 0.35
+  max_frames: 100
+  timeout_seconds: 600
+
+scoreboard_ocr:
+  enabled: true
+  sample_stride: 25
+  min_stable_frames: 3
+
+ball_trajectory:
+  max_interp_gap_frames: 5
+
+touch_inference:
+  max_foot_distance_px: 55.0
+  max_pitch_distance_m: 2.5
+  min_touch_confidence: 0.35
+
+possession_chain:
+  max_pass_gap_ms: 4000.0
+  min_pass_confidence: 0.40
+
+goal_detection:
+  weights:
+    ball_crossing: 0.30
+    goal_geometry: 0.15
+    scoreboard: 0.20
+    spotting: 0.20
+    restart: 0.10
+    celebration: 0.05
+  auto_confirm_score: 0.85
+  candidate_score: 0.55
+  unresolved_floor: 0.20
+  # Single evidence source can never auto-confirm (enforced by EventDetector).
+  require_corroboration: true
+  pitch_length_m: 105.0
+  goal_line_tolerance_m: 1.0
+  goal_mouth_half_width_m: 3.66
+
+scorer:
+  lookback_ms: 4000.0
+  min_attribution: 0.70
+
+assist:
+  max_link_window_ms: 15000.0
+  min_pass_confidence: 0.50
+
+shot_detection:
+  auto_confirm_score: 0.85
+  candidate_score: 0.50
+  unresolved_floor: 0.20
+  min_speed_px: 18.0
+
+clips:
+  pre_seconds: 7.0
+  post_seconds: 8.0
+  export: true
+
+duplicate_suppression:
+  match_window_ms: 12000.0

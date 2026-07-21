@@ -1,0 +1,43 @@
+{
+  "repo": "/home/ahmet/projects/soccernet/sn-gamestate",
+  "remote": "https://github.com/SoccerNet/sn-gamestate.git",
+  "branch": "detached HEAD",
+  "commit": "1c958345067218297d221e45e1a6405f975f83e0",
+  "dirty": false,
+  "fsck": "clean",
+  "submodules": "none",
+  "git_lfs": "none (.gitattributes absent)",
+  "tracked_files": 123,
+  "disk_size_no_git": "98M",
+  "license": "GPL-3.0 (LICENSE present)",
+  "task": "SoccerNet Game State Reconstruction (GSR) baseline on TrackLab",
+  "framework": "tracklab==1.3.24 (Hydra/OmegaConf modular pipeline)",
+  "pipeline": [
+    "bbox_detector(yolo_ultralytics)",
+    "reid(prtreid)",
+    "track(bpbreid_strong_sort)",
+    "pitch(nbjw_calib)",
+    "calibration(nbjw_calib)",
+    "jersey_number_detect(mmocr)",
+    "tracklet_agg(voting_role_jn)",
+    "team(kmeans_embeddings)",
+    "team_side(mean_position)"
+  ],
+  "output_fields": [
+    "bbox_image",
+    "bbox_pitch",
+    "track_id",
+    "attributes.role",
+    "attributes.team",
+    "attributes.jersey",
+    "image_id",
+    "video_id",
+    "category_id"
+  ],
+  "inference_entrypoint": "tracklab -cn soccernet (Hydra CLI)",
+  "eval_entrypoint": "eval=gs_hota (GS-HOTA metric)",
+  "python_constraint": ">=3.9,<3.10",
+  "torch_pin": "1.13.1",
+  "dataset_required": "SoccerNetGS (official, not present)",
+  "checkpoints_in_repo": "none (only calibration mean/std/Radar); others auto-downloaded at runtime"
+}

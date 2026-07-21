@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual envs / secrets
+.env
+.env.*
+.venv/
+venv/
+
+# Local IDE (keep shared .vscode if useful; ignore personal overrides)
+*.swp
+.DS_Store
+
+# Runtime / local data
+runs/
+models/
+logs/
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.webm
+*.pth
+*.pt
+*.onnx
+*.engine
+*.bin
+*.weights
+
+# Large evaluation frame dumps (keep CSV/JSON/schema; regenerate frames locally)
+configs/evaluation/**/frames/
+*.png
+*.jpg
+*.jpeg
+!docs/**/*.png
+!docs/**/*.jpg
+
+# Artifacts: keep small JSON/CSV/MD reports; ignore binary media and weights
+artifacts/**/*.mp4
+artifacts/**/*.pt
+artifacts/**/*.pth
+artifacts/**/*.png
+artifacts/**/*.jpg
+artifacts/jersey/*.pt
+
+# Caches / temp
+*.parquet
+.cache/
+tmp/
+temp/

@@ -1,0 +1,19 @@
+{
+  "recognition_inference": {
+    "ran": false,
+    "status": "BLOCKED_CHECKPOINT_MISSING",
+    "reason": "sn-jersey ships no recognition model and no compatible checkpoint exists locally",
+    "preview_video": "/mnt/c/football_data/videos/test_clips/jersey_tracklet_preview.mp4 (not run: same blocker)"
+  },
+  "model_architecture_smoke": {
+    "ran": true,
+    "status": "MODEL_ARCHITECTURE_SMOKE_PASS",
+    "detail": "GENERIC torchvision resnet18(weights=None), NOT sn-jersey model; CPU+CUDA forward, no NaN/Inf, no weight download",
+    "note": "Not recognition; proves data->tensor->backbone pipeline is runnable."
+  },
+  "reference_loader": {
+    "ran": true,
+    "status": "PASS",
+    "detail": "football-analytics reference reader loaded real train/test tracklets into [B,8,3,64,64] batches (bs1/bs4, workers 0/2), deterministic; repo provides no loader."
+  }
+}

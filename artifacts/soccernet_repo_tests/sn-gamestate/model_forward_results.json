@@ -1,0 +1,6 @@
+{
+  "status": "BLOCKED",
+  "ran": false,
+  "reason": "No torch/tracklab in the only compatible (py3.9) env; model classes (HRNet, prtreid, mmocr, yolo) cannot be constructed. Not run with random weights.",
+  "note": "ai-dev has torch but wrong Python (3.10) for repo and lacks tracklab; repo model code depends on tracklab/openmmlab APIs."
+}

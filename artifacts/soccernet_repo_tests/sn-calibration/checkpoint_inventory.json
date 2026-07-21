@@ -1,0 +1,52 @@
+{
+  "required_checkpoint": {
+    "path": "resources/soccer_pitch_segmentation.pth",
+    "declared_in": ".gitattributes (git-lfs)",
+    "present": false,
+    "in_HEAD": false,
+    "found_elsewhere": false,
+    "model": "deeplabv3_resnet50 num_classes=29, loaded via checkpoint['model']",
+    "usable_by_repo": false,
+    "note": "MISSING everywhere; real neural inference BLOCKED. No random/dummy substitution."
+  },
+  "repo_assets": [
+    {
+      "path": "/home/ahmet/projects/soccernet/sn-calibration/resources/mean.npy",
+      "size": 152,
+      "sha256": "8dcd1f96b2486853498b6e38a0eb344cda9c272cd0fe87adb84ec0a09e244a36",
+      "usable_by_repo": true
+    },
+    {
+      "path": "/home/ahmet/projects/soccernet/sn-calibration/resources/std.npy",
+      "size": 152,
+      "sha256": "49dac1cfa5ab2f197a64332c4fd7dc08335dd46d31244acc0e4a03686241fe79",
+      "usable_by_repo": true
+    }
+  ],
+  "other_models_found_not_usable": [
+    {
+      "path": "/home/ahmet/models/sn-banner/SV_lines.pth",
+      "size": 264857893,
+      "sha256": "2751242917f8c0f858a396e0cfe4521be39fe07bf049590eb21714526acecac1",
+      "belongs_to": "sn-banner / detector",
+      "usable_by_this_repo": false,
+      "reason": "not a deeplabv3_resnet50 29-class checkpoint['model'] state dict"
+    },
+    {
+      "path": "/home/ahmet/models/sn-banner/SV_kp.pth",
+      "size": 264964645,
+      "sha256": "7ea78fa76aaf94976a8eca428d6e3c59697a93430cba1a4603e20284b61f5113",
+      "belongs_to": "sn-banner / detector",
+      "usable_by_this_repo": false,
+      "reason": "not a deeplabv3_resnet50 29-class checkpoint['model'] state dict"
+    },
+    {
+      "path": "/home/ahmet/models/yolo11n.pt",
+      "size": 5613764,
+      "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+      "belongs_to": "sn-banner / detector",
+      "usable_by_this_repo": false,
+      "reason": "not a deeplabv3_resnet50 29-class checkpoint['model'] state dict"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "repo": "/home/ahmet/projects/soccernet/sn-jersey",
+  "remote": "https://github.com/SoccerNet/sn-jersey.git",
+  "branch": "detached HEAD (main)",
+  "commit": "2f43b48c59eefe0bb5d948888db07f55f51208ad",
+  "dirty": false,
+  "fsck": "clean",
+  "submodules": "none",
+  "tracked_files": 1,
+  "tracked_file_list": [
+    "README.md"
+  ],
+  "disk_size_no_git": "20K",
+  "git_lfs_pointers": "none (.gitattributes absent)",
+  "license_status": "LICENSE_NOT_VERIFIED (no LICENSE/COPYING; README has no license text; dataset derived from sn-gamestate/sn-tracking)",
+  "repo_type": "README-only challenge/dataset spec (NO baseline code)",
+  "task": "Jersey Number RECOGNITION (per-tracklet classification -> int; -1 = not visible)",
+  "input": "player tracklet = folder of thumbnail crops (multi-frame/temporal)",
+  "code_present": {
+    "loader": false,
+    "model": false,
+    "training": false,
+    "inference": false,
+    "evaluation": false,
+    "notebooks": false,
+    "unit_tests": false
+  },
+  "gt_json_contract": "flat dict {player_id(str): jersey_number(int)}; -1 = not visible",
+  "submission_format": "same dict as GT; metric = accuracy (EvalAI)",
+  "download_method": "SoccerNet pip package downloadDataTask(task='jersey-2023') (not used; data already local)"
+}

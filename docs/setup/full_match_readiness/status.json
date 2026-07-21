@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.1.0",
+  "updated_at": "2026-07-18T22:10:00+03:00",
+  "statuses": {
+    "FULL_MATCH": "REAL_SHORT_VIDEO_PIPELINE_PASS",
+    "MULTICAMERA": "MULTICAMERA_INFRASTRUCTURE_PASS",
+    "EVENTS": "EVENT_DETECTION_INFRASTRUCTURE_PASS",
+    "GLOBAL_ID": "GLOBAL_ID_SINGLE_CAMERA_PASS",
+    "FULL_MATCH_90MIN_PASS": false,
+    "MULTICAMERA_REAL_VIDEO_PASS": false,
+    "MATCH_EVENTS_REAL_VIDEO_PASS": false
+  },
+  "model_stages_claimed": true,
+  "real_short_video_run": {
+    "run_dir": "/home/ahmet/workspace/full_match_runs/run_football_short_model",
+    "orchestrated_dir": "/home/ahmet/workspace/full_match_runs/run_football_short_model/orchestrated",
+    "pipeline_run_dir": "/home/ahmet/workspace/full_match_runs/run_football_short_model/chunk_artifacts/camera_1/chunk_00000/pipeline_runs/run_20260718_214418_5349f4",
+    "input_video": "/mnt/c/football_data/videos/test_clips/football.mp4",
+    "duration_seconds": 30.0,
+    "detections": 12691,
+    "track_rows": 10601,
+    "unique_tracks": 225,
+    "calibration_valid_ratio": 0.9467,
+    "player_frame_metrics_rows": 10601,
+    "player_frame_metrics_valid_ratio": 0.0729,
+    "global_players": 224,
+    "unresolved_identities": 223,
+    "role_distribution": {"unknown_person": 131, "outfield_player": 94},
+    "confirmed_events": 0,
+    "candidate_events": 0,
+    "events_reason": "no_supported_event_detected",
+    "jersey_inference": {
+      "tracklets_scored": 10,
+      "confident_predictions": 0,
+      "note": "real TemporalJerseyRecognizer checkpoint; all predictions below 0.6 confidence threshold, reported as unresolved"
+    },
+    "peak_ram_bytes": 2603479040,
+    "peak_vram_bytes": 56339968,
+    "torch": "2.11.0+cu128"
+  },
+  "panel_integration": {
+    "real_run_started_from_panel_commands": true,
+    "run_id": "panel-demo",
+    "run_dir": "/mnt/c/football_data/results/panel-demo/run",
+    "chunk_pass_ratio": 1.0
+  },
+  "resume": {
+    "duplicate_processing": false,
+    "resume_after_pass_executed_chunks": 0,
+    "resume_after_pass_skipped_chunks": 1
+  },
+  "tests": {
+    "package_tests_passed": 253,
+    "new_regression_tests_passed": 21,
+    "total_project_passed": 517,
+    "total_project_failed": 0
+  },
+  "infrastructure_run_preserved": "/home/ahmet/workspace/full_match_runs/run_football_short_infra",
+  "blockers": [
+    "FULL_MATCH_90MIN_PASS requires a 45/90-minute input video (none available)",
+    "MULTICAMERA_REAL_VIDEO_PASS requires a same-match multi-camera recording (none available)",
+    "MATCH_EVENTS_REAL_VIDEO_PASS requires event-labeled footage plus manual goal/assist confirmation",
+    "Role separation limited on 30s broadcast clip: no officials-kit or goalkeeper-kit reference measured, so referee/goalkeeper roles honestly remain unclaimed",
+    "Jersey numbers unresolved: recognizer confidence below threshold on far-field broadcast crops"
+  ]
+}

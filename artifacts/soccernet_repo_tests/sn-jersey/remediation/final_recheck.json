@@ -1,0 +1,104 @@
+{
+  "implementation": "clean_room_football_analytics",
+  "train_images_dir": true,
+  "test_images_dir": true,
+  "train_gt_entries": 1427,
+  "test_gt_entries": 1211,
+  "checkpoint_loaded": true,
+  "checkpoint_path": "/home/ahmet/models/jersey_recognition_v1_best.pt",
+  "device": "cuda",
+  "val_accuracy_artifact": {
+    "val_known_accuracy_argmax": 0.5732484076433121,
+    "random_baseline_acc": 0.012738853503184714,
+    "beats_random": true,
+    "best_val_accuracy": 0.5732484076433121
+  },
+  "known_tracklet_inference": {
+    "n": 20,
+    "argmax_correct": 11,
+    "argmax_accuracy": 0.55,
+    "examples": [
+      {
+        "tracklet_id": "1",
+        "gt": 30,
+        "pred": -1,
+        "predicted_class": 8,
+        "confidence": 0.2886
+      },
+      {
+        "tracklet_id": "1001",
+        "gt": 25,
+        "pred": 25,
+        "predicted_class": 25,
+        "confidence": 0.4682
+      },
+      {
+        "tracklet_id": "1034",
+        "gt": 55,
+        "pred": -1,
+        "predicted_class": 55,
+        "confidence": 0.3117
+      },
+      {
+        "tracklet_id": "1038",
+        "gt": 29,
+        "pred": 29,
+        "predicted_class": 29,
+        "confidence": 0.6704
+      },
+      {
+        "tracklet_id": "104",
+        "gt": 3,
+        "pred": 5,
+        "predicted_class": 5,
+        "confidence": 0.3843
+      },
+      {
+        "tracklet_id": "1040",
+        "gt": 9,
+        "pred": 55,
+        "predicted_class": 55,
+        "confidence": 0.4593
+      },
+      {
+        "tracklet_id": "1052",
+        "gt": 11,
+        "pred": 11,
+        "predicted_class": 11,
+        "confidence": 0.4584
+      },
+      {
+        "tracklet_id": "1053",
+        "gt": 1,
+        "pred": 1,
+        "predicted_class": 1,
+        "confidence": 0.4228
+      },
+      {
+        "tracklet_id": "1056",
+        "gt": 55,
+        "pred": -1,
+        "predicted_class": 3,
+        "confidence": 0.2253
+      },
+      {
+        "tracklet_id": "106",
+        "gt": 17,
+        "pred": -1,
+        "predicted_class": 8,
+        "confidence": 0.2228
+      }
+    ]
+  },
+  "preview_inference": {
+    "source_mp4": "/mnt/c/football_data/videos/test_clips/jersey_tracklet_preview.mp4",
+    "frames_extracted": 578,
+    "ground_truth": 10,
+    "pred": -1,
+    "predicted_class": 1,
+    "confidence": 0.1309,
+    "raw_confidence": 0.1309,
+    "matches_gt": false
+  },
+  "pass": true
+}

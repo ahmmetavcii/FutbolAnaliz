@@ -1,0 +1,9 @@
+# Chunk pipeline adapter descriptor: binds the full-match scheduler to the
+# Opta-like production pipeline. Passed to run_full_match via
+# --chunk-pipeline-config. The processor streams each chunk through
+# scripts/run_pipeline.py, so all detections/tracks are real model outputs.
+adapter:
+  callable: football_analytics.full_match.pipeline_adapter.run_chunk_via_existing_pipeline
+  pipeline_config: configs/pipeline/opta_analytics.yaml
+  environment:
+    FA_FULL_MATCH_PIPELINE_CONFIG: configs/pipeline/opta_analytics.yaml

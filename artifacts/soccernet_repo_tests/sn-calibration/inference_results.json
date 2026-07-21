@@ -1,0 +1,24 @@
+{
+  "neural_extremity_detection": {
+    "attempted": true,
+    "ran": false,
+    "status": "BLOCKED",
+    "reason": "resources/soccer_pitch_segmentation.pth missing; FileNotFoundError on checkpoint load",
+    "frames_prepared": [
+      "frame_0100..0500 from football.mp4 (1920x1080)"
+    ],
+    "note": "No random/dummy weights used. torchvision resnet50 imagenet backbone auto-downloaded by model constructor (unintended, unused for inference)."
+  },
+  "calibration_geometry_module": {
+    "ran": true,
+    "status": "PASS",
+    "detail": "synthetic camera round-trip through src/camera.py (from_homography + project_point) on repo pitch coords",
+    "cases": 5,
+    "valid_cases": 5,
+    "intrinsics_recovery": "exact (focal rel err ~1e-14)",
+    "homography_invertible": true,
+    "finite_outputs": true,
+    "rough_reprojection_px_range": "7.7 - 10.1 (from_homography rough initializer, pre-refine)",
+    "note": "This validates the calibration MATH only, NOT the neural pipeline."
+  }
+}

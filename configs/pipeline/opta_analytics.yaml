@@ -1,0 +1,259 @@
+pipeline:
+  name: opta_analytics
+  schema_version: "3.0.0"
+  resume: true
+  stages:
+    - ingest
+    - shot_classification
+    - detection
+    - tracking
+    - track_quality
+    - reid
+    - team_identity
+    - camera_motion
+    - calibration
+    - field_coordinates
+    - ball_state
+    - possession
+    - metrics
+    - analytics_render
+    - global_identity
+    - ball_tracking
+    - touch_inference
+    - action_inference
+    - opta_analytics
+
+# Production runtime excludes sn-trackeval and sn-echoes.
+# Those remain available only under tests/evaluation adapters.
+
+model:
+  name: yolo11n
+  path: /home/ahmet/models/yolo11n.pt
+  imgsz: 640
+  batch: 1
+  device: 0
+  half: true
+  conf: 0.25
+  classes: null
+
+detection:
+  save_annotated: true
+
+tracking:
+  primary_tracker: bytetrack
+  trackers: [bytetrack]
+  persist: true
+
+runtime:
+  max_clip_seconds: 60
+  min_clip_seconds: 1
+  workers: 1
+  chunk_seconds: 300
+  cache_max_mb: 512
+  minimum_free_disk_gb: 2
+  omp_num_threads: 2
+  mkl_num_threads: 2
+
+geometry:
+  minimum_bbox_area: 36
+  minimum_visible_ratio: 0.35
+  minimum_crop_quality: 0.25
+  dark_value_threshold: 30
+  bright_value_threshold: 235
+  green_hue_min: 32
+  green_hue_max: 95
+
+shot_classifier:
+  valid_for_spatial: [main_wide, main_medium]
+  scene_cut_histogram_threshold: 0.48
+  wide_green_ratio_min: 0.32
+  medium_green_ratio_min: 0.18
+  close_up_player_height_ratio: 0.35
+  graphic_edge_density_min: 0.22
+  minimum_confidence: 0.45
+  sample_stride: 1
+
+track_quality:
+  minimum_track_frames: 5
+  minimum_coverage: 0.15
+  minimum_detection_confidence: 0.20
+  maximum_bbox_jitter: 1.25
+  maximum_border_truncation: 0.65
+
+reid:
+  enabled: true
+  backend: sn_reid
+  sn_reid_root: /home/ahmet/projects/soccernet/sn-reid
+  model_name: osnet_x1_0
+  model_path: /home/ahmet/models/sn-reid/osnet_x1_0_market1501.pth
+  device: cuda:0
+  image_size: [256, 128]
+  batch_size: 32
+  sample_stride: 5
+  max_samples_per_track: 20
+  min_bbox_area: 36
+  verbose: false
+
+team_identity:
+  color_space: LAB
+  upper_body_top_ratio: 0.10
+  upper_body_bottom_ratio: 0.58
+  minimum_track_samples: 3
+  minimum_team_training_samples: 8
+  maximum_samples_per_track: 20
+  outlier_mad_scale: 3.0
+  minimum_team_confidence: 0.35
+  minimum_role_confidence: 0.35
+  reset_on_scene_cut: true
+  referee_color_separation: 18.0
+
+camera_motion:
+  border_region_ratio: 0.12
+  max_corners: 300
+  quality_level: 0.01
+  minimum_feature_distance: 7
+  forward_backward_error: 1.5
+  ransac_reprojection_threshold: 2.5
+  minimum_inlier_ratio: 0.35
+  minimum_inliers: 8
+  scene_cut_reset: true
+
+calibration:
+  provider_priority: [sn_calibration, pnlcalib, metadata, manual_json, demo_four_point]
+  manual_json: /home/ahmet/projects/football-analytics/configs/calibration/manual_football_frame100.json
+  allow_demo_four_point: false
+  pnlcalib:
+    enabled: true
+    python: /home/ahmet/miniconda3/envs/sn-banner-mmseg/bin/python
+    root: /home/ahmet/projects/third-party/pnlcalib
+    weights_kp: /home/ahmet/models/sn-banner/SV_kp.pth
+    weights_line: /home/ahmet/models/sn-banner/SV_lines.pth
+    device: cuda:0
+    kp_threshold: 0.3434
+    line_threshold: 0.7867
+    min_keypoints: 6
+    frame_stride: 5
+    hold_max_frames: 25
+    timeout_seconds: 1800
+  pitch_length_m: 105.0
+  pitch_width_m: 68.0
+  orientation: left_to_right
+  maximum_reprojection_error: 8.0
+  minimum_visible_pitch_coverage: 0.15
+  minimum_confidence: 0.50
+
+football_ball:
+  enabled: true
+  model_path: /home/ahmet/models/football-ball/yolo-sn-ball-opt.pt
+  conf: 0.15
+  imgsz: 1280
+  tile_grid: 2
+  enable_tiles: true
+  enable_roi: true
+  roi_half_size: 256
+  roi_conf: 0.10
+  device: 0
+
+ball_trajectory:
+  ball_class_ids: [32]
+  maximum_gap_frames: 8
+  maximum_gap_seconds: 0.35
+  maximum_pixel_speed_per_second: 2500.0
+  maximum_pixel_acceleration: 8000.0
+  maximum_size_change_ratio: 3.0
+  association_distance_bbox_heights: 3.0
+  scene_cut_reset: true
+  source_camera: camera_1
+  min_detection_confidence: 0.12
+  filter_type: kalman
+
+ball_recovery:
+  enable_roi_search: true
+  enable_optical_flow: true
+  roi_conf: 0.10
+  roi_imgsz: 640
+  roi_half_size: 180
+  max_interp_frames: 5
+  max_interp_seconds: 0.25
+
+global_identity:
+  min_track_frames: 20
+  min_visible_seconds: 1.20
+  min_team_confidence: 0.45
+  max_gap_seconds: 8.0
+  reid_merge_threshold: 0.42
+  reid_strong_threshold: 0.55
+  position_continuity_m: 12.0
+  max_player_speed_mps: 12.0
+  max_validated_per_team: 11
+  allow_hard_cap_demotion: false
+  camera_id: camera_1
+
+touch_inference:
+  max_foot_distance_px: 55.0
+  max_pitch_distance_m: 2.5
+  min_ball_confidence: 0.12
+  min_touch_confidence: 0.35
+  dedup_window_ms: 300.0
+
+possession:
+  field_distance_m: 2.5
+  normalized_pixel_distance: 1.5
+  contested_ratio: 1.25
+  minimum_control_seconds: 0.12
+  unknown_timeout_seconds: 0.40
+  pass_minimum_speed_mps: 5.0
+
+actions:
+  long_pass_m: 25.0
+  min_pass_confidence: 0.45
+  max_pass_gap_ms: 4000.0
+  dribble_min_m: 3.0
+  dribble_opponent_m: 3.0
+  duel_proximity_m: 2.5
+  confirmed_confidence: 0.65
+  candidate_confidence: 0.40
+
+activity_index:
+  min_visible_seconds: 8.0
+  weight_distance: 0.20
+  weight_touches: 0.20
+  weight_passes: 0.20
+  weight_duels: 0.15
+  weight_defensive: 0.15
+  weight_penalty: 0.10
+
+player_metrics:
+  valid_shot_types: [main_wide, main_medium]
+  smoothing_window_seconds: 0.40
+  maximum_plausible_speed_kmh: 38.0
+  maximum_plausible_acceleration_mps2: 10.0
+  sprint_speed_kmh: 25.0
+  minimum_sprint_seconds: 0.50
+  maximum_gap_seconds: 0.40
+  minimum_track_quality: 0.45
+  minimum_calibration_confidence: 0.50
+
+team_metrics:
+  minimum_team_confidence: 0.50
+  minimum_calibration_confidence: 0.50
+  minimum_players: 3
+  occupancy_grid_x: 6
+  occupancy_grid_y: 4
+
+render:
+  layers:
+    - track_id
+    - role
+    - team
+    - identity_confidence
+    - ball
+    - possession
+    - speed
+    - distance
+    - camera_motion
+    - calibration
+    - warnings
+  codec: mp4v
+  minimap_width_ratio: 0.24
+  panel_height_ratio: 0.16

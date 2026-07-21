@@ -1,0 +1,234 @@
+schema_version: 1
+generated_at: '2026-07-18T00:23:04.309904+03:00'
+repositories:
+  sn-tracking:
+    path: /home/ahmet/projects/soccernet/sn-tracking
+    remote: https://github.com/SoccerNet/sn-tracking.git
+    commit: b0bbba35e07ff58010b6313ef8aa59ef663ad392
+    requested_commit: b0bbba35e07ff58010b6313ef8aa59ef663ad392
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 6353027
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-trackeval:
+    path: /home/ahmet/projects/soccernet/sn-trackeval
+    remote: https://github.com/SoccerNet/sn-trackeval.git
+    commit: 9c25232f6f2b56c9f203f1eb55784ff1e97df683
+    requested_commit: 9c25232f6f2b56c9f203f1eb55784ff1e97df683
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 1597591
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-spotting:
+    path: /home/ahmet/projects/soccernet/sn-spotting
+    remote: https://github.com/SoccerNet/sn-spotting.git
+    commit: 9842826f94e1419580a9d17219c11aca7225f7ce
+    requested_commit: '9842826'
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 580936118
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-calibration:
+    path: /home/ahmet/projects/soccernet/sn-calibration
+    remote: https://github.com/SoccerNet/sn-calibration.git
+    commit: ab38f461bec729fead86b6986839de1bb826f16d
+    requested_commit: ab38f46
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 5749095
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-reid:
+    path: /home/ahmet/projects/soccernet/sn-reid
+    remote: https://github.com/SoccerNet/sn-reid.git
+    commit: 621e2b0f2d2a7a3e207b8dd747542b6608bf72db
+    requested_commit: 621e2b0
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 95674241
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-grounding:
+    path: /home/ahmet/projects/soccernet/sn-grounding
+    remote: https://github.com/SoccerNet/sn-grounding.git
+    commit: 910bf859ac6d7aff2b80a6d66155956254f24c6b
+    requested_commit: 910bf85
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 39820644
+    git_fsck: PASS
+    integration: external_official_repository
+  SoccerNet-v3:
+    path: /home/ahmet/projects/soccernet/SoccerNet-v3
+    remote: https://github.com/SoccerNet/SoccerNet-v3.git
+    commit: 7d483a85ad62b5e98f59427eabee8cb87c710d7b
+    requested_commit: 7d483a8
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 15410971
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-jersey:
+    path: /home/ahmet/projects/soccernet/sn-jersey
+    remote: https://github.com/SoccerNet/sn-jersey.git
+    commit: 2f43b48c59eefe0bb5d948888db07f55f51208ad
+    requested_commit: 2f43b48
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 124028
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-caption:
+    path: /home/ahmet/projects/soccernet/sn-caption
+    remote: https://github.com/SoccerNet/sn-caption.git
+    commit: c05973d4f00853e208d54965f4d6fa47364b8d66
+    requested_commit: c05973d
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 923710
+    git_fsck: PASS
+    integration: external_official_repository
+  SoccerNet:
+    path: /home/ahmet/projects/soccernet/SoccerNet
+    remote: https://github.com/SoccerNet/SoccerNet.git
+    commit: 74461027ac2095ce2f8d4ee991eccb5dd5f42459
+    requested_commit: '7446102'
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 124629792
+    git_fsck: PASS
+    integration: external_official_repository
+  PTS-baseline:
+    path: /home/ahmet/projects/soccernet/PTS-baseline
+    remote: https://github.com/SoccerNet/PTS-baseline.git
+    commit: af2ea8234e0c887758ef674071da2a17e2bc6c61
+    requested_commit: af2ea82
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 24012390
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-mvfoul:
+    path: /home/ahmet/projects/soccernet/sn-mvfoul
+    remote: https://github.com/SoccerNet/sn-mvfoul.git
+    commit: 502fb44a76c254e332394f095d54abc830131a44
+    requested_commit: 502fb44
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 69527708
+    git_fsck: PASS
+    integration: external_official_repository
+  ActiveSpotting:
+    path: /home/ahmet/projects/soccernet/ActiveSpotting
+    remote: https://github.com/SoccerNet/ActiveSpotting.git
+    commit: 33a81cb834978ee474ecec0c5a76b6f3f99b4bf4
+    requested_commit: 33a81cb
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 582513
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-gamestate:
+    path: /home/ahmet/projects/soccernet/sn-gamestate
+    remote: https://github.com/SoccerNet/sn-gamestate.git
+    commit: 1c958345067218297d221e45e1a6405f975f83e0
+    requested_commit: 1c95834
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 204880014
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-depth:
+    path: /home/ahmet/projects/soccernet/sn-depth
+    remote: https://github.com/SoccerNet/sn-depth.git
+    commit: 9f6636fafb11447a5bada765e197928ee9efc467
+    requested_commit: 9f6636f
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 20198983
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-echoes:
+    path: /home/ahmet/projects/soccernet/sn-echoes
+    remote: https://github.com/SoccerNet/sn-echoes.git
+    commit: 7105a85b7a8c1c000a31a30d0c29c388105c3de5
+    requested_commit: 7105a85
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 617062805
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-teamspotting:
+    path: /home/ahmet/projects/soccernet/sn-teamspotting
+    remote: https://github.com/SoccerNet/sn-teamspotting.git
+    commit: 091fed2fc35c33f7489f3596958a2fe385e37d65
+    requested_commit: 091fed2
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 4822935
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-banner:
+    path: /home/ahmet/projects/soccernet/sn-banner
+    remote: https://github.com/SoccerNet/sn-banner.git
+    commit: f6d50b24a33d6705d4c04dc4d4d93ecd12b08e74
+    requested_commit: f6d50b2
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 135715379
+    git_fsck: PASS
+    integration: external_official_repository
+  sn-nvs:
+    path: /home/ahmet/projects/soccernet/sn-nvs
+    remote: https://github.com/SoccerNet/sn-nvs.git
+    commit: 1655ab19b3bd78f624a96d0f0c27ec2c9f550f61
+    requested_commit: 1655ab1
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 131574
+    git_fsck: PASS
+    integration: external_official_repository
+  TrackLab:
+    path: /home/ahmet/projects/third-party/tracklab
+    remote: https://github.com/TrackingLaboratory/tracklab.git
+    commit: 5767e86c32a6d6c68e2fc8ae7311f558fff6c7b2
+    requested_ref: v1.3.24
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 197525652
+    git_fsck: PASS
+    integration: third_party
+  PnLCalib:
+    path: /home/ahmet/projects/third-party/pnlcalib
+    remote: https://github.com/mguti97/PnLCalib.git
+    commit: 8c87391d6f4ea40c5e4d65e61529916c7a49ce62
+    requested_ref: remote default at install time
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 142917481
+    git_fsck: PASS
+    integration: third_party
+  No-Bells-Just-Whistles:
+    path: /home/ahmet/projects/third-party/no-bells-just-whistles
+    remote: https://github.com/mguti97/No-Bells-Just-Whistles.git
+    commit: bd993b31c2917096c23bb8aadf148314d17f8345
+    requested_ref: remote default at install time
+    branch: DETACHED
+    dirty: false
+    disk_bytes: 87898193
+    git_fsck: PASS
+    integration: third_party
+  reference-football-analysis:
+    path: /home/ahmet/projects/third-party/reference-football-analysis
+    remote: https://github.com/abdullahtarek/football_analysis.git
+    commit: e4799632cdf271cf57f4eb0c4d872cf1b7ab0f17
+    requested_ref: main at audit time
+    branch: main
+    dirty: false
+    disk_bytes: 13491870
+    git_fsck: PASS
+    license: LICENSE_NOT_VERIFIED
+    integration: read_only_algorithmic_reference

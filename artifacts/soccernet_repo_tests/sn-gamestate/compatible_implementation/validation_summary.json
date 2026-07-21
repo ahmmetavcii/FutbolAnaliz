@@ -1,0 +1,12 @@
+{
+  "technical_status": "PASS",
+  "compatible_implementation_status": "PASS",
+  "prediction_count": 10601,
+  "frame_count": 750,
+  "first_frame": 0,
+  "last_frame": 749,
+  "pitch_valid": 7922,
+  "jersey_known": 0,
+  "json_size_bytes": 5724243,
+  "output": "/mnt/c/football_data/results/soccernet_gamestate_prediction.json"
+}
