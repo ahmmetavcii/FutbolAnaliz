@@ -1,0 +1,67 @@
+# Match-node-tracker provisional candidate integration
+# All feature flags default to false — does NOT change production defaults.
+# Upstream: https://github.com/ajwise9/Match-node-tracker
+# Commit: 2777aa3f1e9cc563eba07a675cebdf4bfd9306bf
+# Decision: PROVISIONAL_CANDIDATE
+
+schema_version: 1
+integration: match_node_tracker
+status: PROVISIONAL_CANDIDATE
+
+feature_flags:
+  enabled_detector: false
+  enabled_team_color: false
+  enabled_camera_motion: false
+  enabled_custom_markers: false
+  enabled_tracker: false
+  enabled_speed: false
+  enabled_possession: false
+
+detector:
+  # Candidate weights: yolo26m football/player/referee (NO goalkeeper class)
+  weights: third_party/authorized/match-node-tracker/train/weights/best.pt
+  sha256: 2caf0b0cac1a09600c7144edf91568c1848003d8e55bd9e3b3906622d7d2205a
+  imgsz: 1280
+  conf: 0.25
+  device: 0
+  class_map:
+    football: ball
+    player: player
+    referee: referee
+  notes:
+    - custom_model.pt lacks referee; prefer best.pt for multi-class candidate
+    - keep production football_ball detector for dedicated ball path
+    - goalkeeper class absent in all upstream checkpoints
+
+team_color:
+  mode: track_level_adapted  # not frame-level upstream TeamTracker
+  ema_alpha: 0.08
+  min_bbox_h: 32
+  notes:
+    - optional fallback only; SigLIP production team_identity remains primary
+
+camera_motion:
+  mode: player_masked_lk_affine
+  notes:
+    - complementary experiment; production CameraMotionEstimator remains primary
+    - speed formula from upstream is NOT enabled
+
+tracker:
+  backend: upstream_iou_id_tracker
+  iou_thresh: 0.3
+  max_age: 20
+  notes:
+    - BENCHMARK_ONLY — must not replace ByteTrack / BoT-SORT / ReID production stack
+
+markers:
+  draw_ball: true
+  draw_referee: true
+  draw_player_triangle: true
+  draw_possession_bar: true
+  draw_speed_label: false
+  notes:
+    - renderer-only; does not mutate analytics
+
+rejected:
+  enabled_speed: false  # bbox-height m/px + max_kmh=40 hard-cap
+  enabled_possession: false  # fixed 80px proximity edge distance

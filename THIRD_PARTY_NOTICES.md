@@ -32,6 +32,7 @@ into `third_party/licenses/`.
 | PnLCalib | GPL-2.0 | External provider; canonical parquet only |
 | No-Bells-Just-Whistles | GPL-2.0 | External sn-gamestate calibration module |
 | Ultralytics YOLO | AGPL-3.0 / commercial | External detection weights for Game State baseline |
+| Match-node-tracker (ajwise9) | Owner-authorized local use; Ultralytics AGPL weights | Immutable under `third_party/authorized/match-node-tracker` @ `2777aa3f1e9cc563eba07a675cebdf4bfd9306bf`; feature-flagged adapters only — not production default |
 
 ## Data terms
 

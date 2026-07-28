@@ -232,3 +232,12 @@ repositories:
     git_fsck: PASS
     license: LICENSE_NOT_VERIFIED
     integration: read_only_algorithmic_reference
+  Match-node-tracker:
+    path: /home/ahmet/projects/football-analytics/third_party/authorized/match-node-tracker
+    remote: https://github.com/ajwise9/Match-node-tracker.git
+    commit: 2777aa3f1e9cc563eba07a675cebdf4bfd9306bf
+    requested_ref: main
+    branch: main
+    dirty: false
+    license: owner_authorized_local_use; ultralytics_weights_AGPL-3.0
+    integration: authorized_feature_flagged_adapters_not_production_default

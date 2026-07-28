@@ -511,8 +511,12 @@ def export_heatmaps(
         ax.imshow(arr, origin="lower", aspect="auto", cmap="YlOrRd")
         ax.set_title(f"P{did_i} ({team})")
         ax.axis("off")
-        path = out_dir / f"player_P{did_i}_{team}_position.png"
+        path = out_dir / f"player_{did_i}_position.png"
         fig.savefig(path, bbox_inches="tight", dpi=100)
+        # Optional team-tagged alias for human browsing (same image).
+        alias = out_dir / f"player_P{did_i}_{team}_position.png"
+        if alias != path:
+            fig.savefig(alias, bbox_inches="tight", dpi=100)
         plt.close(fig)
         written += 1
         for iy, row in enumerate(arr):

@@ -1,0 +1,72 @@
+# Isolated end-to-end candidate config for Match-node-tracker components.
+# NOT wired to production pipeline configs.
+# Upstream: https://github.com/ajwise9/Match-node-tracker
+# Commit: 2777aa3f1e9cc563eba07a675cebdf4bfd9306bf
+
+schema_version: 1
+integration: match_node_tracker_end_to_end
+status: PROVISIONAL_CANDIDATE
+production_binding: none
+
+feature_flags:
+  # Candidate detector + helpers enabled for isolated experiments only.
+  enabled_detector: true
+  enabled_team_color: true
+  enabled_camera_motion: true
+  enabled_custom_markers: true
+  # Production trackers only — upstream IoU remains disabled.
+  enabled_tracker: false
+  enabled_speed: false
+  enabled_possession: false
+
+detector:
+  weights: third_party/authorized/match-node-tracker/train/weights/best.pt
+  sha256: 2caf0b0cac1a09600c7144edf91568c1848003d8e55bd9e3b3906622d7d2205a
+  imgsz: 1280
+  conf: 0.25
+  device: 0
+  half: true
+  class_map:
+    football: ball
+    player: player
+    referee: referee
+  goalkeeper_class: absent
+  notes:
+    - Goalkeeper detections are never invented from this weight.
+    - Role-classifier may still label GK after tracking.
+
+tracking:
+  backends:
+    - bytetrack
+    - botsort
+  bytetrack_config: configs/tracking/bytetrack_football.yaml
+  botsort_config: ultralytics/cfg/trackers/botsort.yaml
+  forbid_upstream_iou: true
+
+team_color:
+  enabled: true
+  mode: track_level_adapted
+  ema_alpha: 0.08
+  min_bbox_h: 32
+  do_not_force_referees_into_teams: true
+  no_team_size_hard_cap: true
+
+camera_motion:
+  enabled: true
+  role: auxiliary_signal_only
+  does_not_replace_homography: true
+  does_not_replace_speed: true
+
+markers:
+  enabled: true
+  draw_only: true
+
+calibration:
+  football_video: configs/calibration/manual_football_frame100.json
+  other_videos: propagated_demo_manual_low_confidence
+
+known_limitations:
+  - ball_GT_status=GT_INCOMPLETE until review_sample reviewed=true reaches 50
+  - identity_GT_status=GT_INCOMPLETE
+  - team0/team1 labels may flip across runs; match by color centers
+  - no goalkeeper class in upstream best.pt

@@ -1,0 +1,62 @@
+frame_idx,gt_id,class_name,x1,y1,x2,y2,occluded,difficult,reviewed,notes
+10,f10_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+15,f15_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+30,f30_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+40,f40_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+45,f45_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+50,f50_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+60,f60_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+80,f80_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+90,f90_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+100,f100_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+150,f150_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+160,f160_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+180,f180_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+200,f200_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+220,f220_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+240,f240_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+250,f250_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+260,f260_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+280,f280_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+300,f300_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+320,f320_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+330,f330_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+350,f350_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+360,f360_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+380,f380_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+400,f400_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+420,f420_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+450,f450_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+480,f480_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+500,f500_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+520,f520_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+540,f540_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+560,f560_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+600,f600_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+620,f620_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+680,f680_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+700,f700_placeholder,not_target,,,,,False,False,False,placeholder — replace with real boxes via annotate_human_detection_gt.py
+120,f120_empty,not_target,,,,,False,False,True,explicit_empty_frame
+0,f0_p1,player,534.3580322265625,688.2354736328125,577.5338134765625,784.0706176757812,False,False,True,from_proposal
+0,f0_p2,player,1311.0048828125,447.9337158203125,1349.6697998046875,515.1235961914062,False,False,True,from_proposal
+0,f0_p3,player,839.91650390625,636.3207397460938,900.3980102539062,719.0404663085938,False,False,True,from_proposal
+0,f0_p4,player,587.275146484375,591.3864135742188,628.6517944335938,671.1223754882812,False,False,True,from_proposal
+0,f0_p5,player,359.8545837402344,723.4288940429688,392.42529296875,824.248046875,False,False,True,from_proposal
+0,f0_p6,player,1279.128173828125,394.3551940917969,1306.578125,462.4088439941406,False,False,True,from_proposal
+0,f0_p7,player,873.3427124023438,362.2944946289063,904.3787231445312,422.1447448730469,False,False,True,from_proposal
+0,f0_p8,player,1370.774658203125,815.8233642578125,1442.9959716796875,903.0297241210938,False,False,True,from_proposal
+0,f0_p9,player,223.66525268554688,514.3734130859375,254.6934051513672,593.2505493164062,False,False,True,from_proposal
+0,f0_p10,player,996.982666015625,454.9626770019531,1026.3106689453125,525.512939453125,False,False,True,from_proposal
+0,f0_p11,player,949.33056640625,223.10093688964844,968.9051513671876,273.085205078125,False,False,True,from_proposal
+0,f0_p12,player,1160.3184814453125,356.2093200683594,1186.114990234375,411.8072509765625,False,False,True,from_proposal
+0,f0_p13,player,1572.8260498046875,612.9332275390625,1612.25732421875,694.0474243164062,False,False,True,from_proposal
+0,f0_p14,player,776.2535400390625,418.704345703125,801.5317993164062,488.8489990234375,False,False,True,from_proposal
+0,f0_p15,player,1146.9908447265625,725.9746704101562,1203.8896484375,794.8703002929688,False,False,True,from_proposal
+0,f0_p16,player,1124.822509765625,707.2362670898438,1177.431640625,790.6372680664062,False,False,True,from_proposal
+0,f0_p17,player,1096.5963134765625,306.1376342773437,1112.1829833984375,358.49029541015625,False,False,True,from_proposal
+0,f0_p18,player,375.189697265625,307.2200927734375,398.9916687011719,365.1910095214844,False,False,True,from_proposal
+0,f0_p20,referee,308.71942138671875,225.146224975586,327.2489318847656,272.3787841796875,False,False,True,from_proposal
+0,f0_p21,player,777.4364013671875,368.5593872070313,801.3425903320312,429.00140380859375,False,False,True,from_proposal
+0,f0_p23,player,1229.7508544921875,431.661865234375,1262.7608642578125,501.5089111328125,False,False,True,from_proposal
+0,f0_p24,referee,1854.478271484375,808.9813232421875,1892.9091796875,915.8623657226562,False,False,True,from_proposal
+5,f5_p23,referee,1854.33935546875,809.2640380859375,1891.1490478515625,915.7319946289062,False,False,True,from_proposal

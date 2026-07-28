@@ -1,0 +1,85 @@
+{
+  "video": "/mnt/c/football_data/videos/test_clips/football.mp4",
+  "video_name": "football",
+  "n_sample_frames": 40,
+  "frame_width": 1920,
+  "frame_height": 1080,
+  "fps": 25.0,
+  "classes": [
+    "player",
+    "goalkeeper",
+    "referee",
+    "ignore_person",
+    "not_target"
+  ],
+  "reviewed_policy": "Model proposals are NEVER auto-accepted as GT",
+  "completion": {
+    "reviewed_frames": 0,
+    "target_frames": 40
+  },
+  "strata": {
+    "wide_main": [
+      10,
+      40,
+      80
+    ],
+    "small_distant": [
+      120,
+      200,
+      280
+    ],
+    "dense_midfield": [
+      150,
+      220,
+      320
+    ],
+    "penalty_area": [
+      180,
+      260,
+      400
+    ],
+    "occlusion": [
+      90,
+      240,
+      360
+    ],
+    "fast_pan": [
+      300,
+      420,
+      500
+    ],
+    "zoom": [
+      330,
+      450
+    ],
+    "referee_visible": [
+      60,
+      160,
+      350,
+      520
+    ],
+    "goalkeeper_view": [
+      100,
+      380,
+      560
+    ],
+    "close_up": [
+      480,
+      600
+    ],
+    "bench_area": [
+      50,
+      540
+    ],
+    "stand_hard_negative": [
+      5,
+      700
+    ],
+    "scene_cut_or_replay": [
+      250,
+      620,
+      680
+    ]
+  },
+  "upstream_commit": "2777aa3f1e9cc563eba07a675cebdf4bfd9306bf"
+}

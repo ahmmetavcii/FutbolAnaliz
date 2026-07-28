@@ -1,0 +1,55 @@
+# Hybrid football detector candidate config
+# Production defaults are NOT changed by this file.
+schema_version: 1
+status: PROVISIONAL_CANDIDATE
+upstream_commit: 2777aa3f1e9cc563eba07a675cebdf4bfd9306bf
+
+human:
+  weights: third_party/authorized/match-node-tracker/train/weights/best.pt
+  sha256: 2caf0b0cac1a09600c7144edf91568c1848003d8e55bd9e3b3906622d7d2205a
+  classes: [player, referee]
+  # goalkeeper class absent in weights — never invented
+
+ball:
+  weights: /home/ahmet/models/football-ball/yolo-sn-ball-opt.pt
+  source: football_ball_detector
+
+role:
+  goalkeeper_from_role_classifier: true
+  goalkeeper_min_confidence: 0.55
+  low_confidence_keeps_role: player
+
+thresholds:
+  player: [0.15, 0.20, 0.25, 0.30]
+  referee: [0.25, 0.35, 0.45, 0.55]
+  ball: [0.05, 0.10, 0.15, 0.20]
+
+# Recommended runtime candidate from heuristic search (GT incomplete — not accuracy-validated)
+recommended_runtime:
+  imgsz: 960
+  player: 0.15
+  referee: 0.25
+  ball: 0.20
+  note: Faster than 1280 on search frames; promote only after human/ball GT.
+
+imgsz: [960, 1280]
+
+search:
+  strategy: two_stage  # coarse then fine on promising configs
+  coarse:
+    player: [0.20, 0.25]
+    referee: [0.35, 0.45]
+    ball: [0.10, 0.15]
+    imgsz: [960, 1280]
+  fine_extra:
+    player: [0.15, 0.30]
+    referee: [0.25, 0.55]
+    ball: [0.05, 0.20]
+
+fusion:
+  person_iou_conflict: 0.55
+  prefer_referee_margin: 0.05
+  ball_excluded_from_human_nms: true
+  unresolved_class_name: person_unresolved
+
+device: 0
