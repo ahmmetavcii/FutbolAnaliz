@@ -24,13 +24,15 @@ thresholds:
   referee: [0.25, 0.35, 0.45, 0.55]
   ball: [0.05, 0.10, 0.15, 0.20]
 
-# Recommended runtime candidate from heuristic search (GT incomplete — not accuracy-validated)
+# Recommended runtime from autonomous proxy search (GT incomplete — not accuracy-validated)
 recommended_runtime:
-  imgsz: 960
-  player: 0.15
-  referee: 0.25
+  imgsz: 1280
+  player: 0.25
+  referee: 0.45
   ball: 0.20
-  note: Faster than 1280 on search frames; promote only after human/ball GT.
+  note: >
+    Coarse search liked imgsz=960; full-video proxy on football.mp4 preferred 1280 + botsort_reid.
+    Promote only after human/ball/identity GT.
 
 imgsz: [960, 1280]
 
