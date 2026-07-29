@@ -1,0 +1,24 @@
+name: tracking_identity_final
+production_default: false
+status: PROVISIONAL_CANDIDATE
+display_id_source: canonical_global_player_id
+local_tracker: bytetrack_long_buffer_960_from_stabilized
+global_association: constrained_hierarchical_pairwise_veto
+assoc:
+  reid_merge: 0.5
+  reid_strong: 0.6
+  reid_min_crops: 2
+  max_gap_s: 8.0
+  max_gap_strong_s: 16.0
+  max_gap_short_s: 2.0
+  max_speed_mps: 11.0
+  short_gap_pitch_m: 8.0
+  min_merge_score: 0.55
+  shoe_aux_bonus: 0.03
+  jersey_match_bonus: 0.18
+  require_reid_or_jersey: true
+  fps: 25.0
+gt_status: GT_INCOMPLETE
+rollback:
+  previous: configs/pipeline/tracking_detection_stabilized.yaml
+  results: /mnt/c/football_data/results/tracking_stabilized

@@ -1,0 +1,33 @@
+version: 1
+
+identity_aliases:
+  - source_gid: 23
+    canonical_gid: 17
+    team: T1
+    reason: human_verified_same_player
+
+team_overrides:
+  - global_id: 16
+    old_team: T1
+    new_team: T0
+    reason: human_verified_wrong_team
+
+role_overrides:
+  - global_id: 22
+    old_role: PLAYER
+    new_role: REFEREE
+    remove_team_assignment: true
+    reason: human_verified_referee
+
+stabilization_targets:
+  - global_id: 6
+    team: T1
+  - global_id: 10
+    team: T1
+    occlusion_gap_recovery: true
+  - global_id: 9
+    team: T1
+  - global_id: 5
+    team: T1
+  - global_id: 19
+    team: T1

@@ -1,0 +1,11 @@
+{
+  "n_items": 20,
+  "with_pair_clips": 20,
+  "with_context_clips": 20,
+  "review_types": {
+    "merged": 7,
+    "occlusion": 6,
+    "trajectory_break": 6,
+    "merged_low_conf": 1
+  }
+}

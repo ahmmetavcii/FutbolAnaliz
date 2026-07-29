@@ -1,0 +1,21 @@
+name: tracking_detection_stabilized
+panel_label: Tracking Stabilized
+production_default: false
+status: PROVISIONAL_CANDIDATE
+detector:
+  imgsz: 960
+  player: 0.25
+  referee: 0.6
+tracker: /home/ahmet/workspace/tracking_role_pitch_stabilization/artifacts/bytetrack_stab.yaml
+deadzone: 0.75
+features:
+  shot_type_gating: true
+  calibration_state_machine: true
+  pitch_space_kalman: true
+  track_role_state_machine: true
+  footpoint: smoothed_bbox_bottom_center
+  windowed_image_deadzone: true
+rollback:
+  previous: configs/pipeline/tracking_detection_refined.yaml
+  results: /mnt/c/football_data/results/tracking_refined
+gt_status: GT_INCOMPLETE

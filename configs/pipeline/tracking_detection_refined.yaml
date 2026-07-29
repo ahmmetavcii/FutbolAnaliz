@@ -1,0 +1,23 @@
+name: tracking_detection_refined
+panel_label: Tracking Refined
+production_default: false
+status: PROVISIONAL_CANDIDATE
+detector:
+  type: hybrid
+  imgsz: 960
+  player: 0.25
+  referee: 0.5
+  ball: 0.2
+tracker: /home/ahmet/workspace/autonomous_tracking_refinement/artifacts/bytetrack_refined.yaml
+features:
+  pitch_person_filter: true
+  track_role_classifier: true
+  bbox_smoothing: true
+  botsort_gmc_reid: false
+  bytetrack_long_buffer: true
+  deep_eiou: skipped_isolated
+  hard_negative_retrain: false
+rollback:
+  previous_config: configs/pipeline/tracking_detection_final.yaml
+  previous_results: /mnt/c/football_data/results/tracking_final
+gt_status: GT_INCOMPLETE

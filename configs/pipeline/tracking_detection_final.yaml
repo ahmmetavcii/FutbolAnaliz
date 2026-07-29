@@ -1,0 +1,52 @@
+# Tracking & Detection Final — candidate pipeline config
+# Panel label: "Tracking & 2D Final"
+# production_default: false  (GT incomplete — do not auto-promote)
+schema_version: 1
+status: PROVISIONAL_CANDIDATE
+panel_label: "Tracking & 2D Final"
+production_default: false
+upstream_commit: 2777aa3f1e9cc563eba07a675cebdf4bfd9306bf
+
+detector:
+  type: hybrid_football
+  human_weights: third_party/authorized/match-node-tracker/train/weights/best.pt
+  human_sha256: 2caf0b0cac1a09600c7144edf91568c1848003d8e55bd9e3b3906622d7d2205a
+  ball_weights: /home/ahmet/models/football-ball/yolo-sn-ball-opt.pt
+  imgsz: 1280
+  thresholds:
+    player: 0.25
+    referee: 0.45
+    ball: 0.20
+  note: Coarse search preferred imgsz=960; full-video proxy selected imgsz=1280.
+
+tracker:
+  name: botsort_reid
+  config: /home/ahmet/workspace/autonomous_tracking_final/artifacts/tracker_botsort_reid.yaml
+  alternatives_evaluated:
+    - bytetrack_football
+    - bytetrack_longbuf
+    - botsort_reid
+
+reid:
+  model: osnet_x1_0
+  checkpoint: /home/ahmet/models/sn-reid/osnet_x1_0_market1501.pth
+  note: Generic Market1501 OSNet — football-limited; UNVERIFIED identity accuracy.
+
+jersey:
+  checkpoint: /home/ahmet/models/jersey_recognition_v1_best.pt
+
+features:
+  team_color_adapter: true
+  camera_motion_aux: true
+  custom_markers: true
+  shoe_color_aux: true
+  global_identity: true
+  no_team_size_hard_cap: true
+  no_global_id_hard_cap: true
+
+gt_status: GT_INCOMPLETE
+honesty: >
+  Automated proxy metrics and visual continuity improved;
+  exact identity accuracy remains unverified without completed identity ground truth.
+
+results_dir: /mnt/c/football_data/results/tracking_final/
